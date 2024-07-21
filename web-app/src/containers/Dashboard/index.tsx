@@ -8,17 +8,11 @@ const Repository = () => {
   const isExperiments = location.pathname.includes('/projects');
   const isTask = location.pathname.includes('/categories');
   const isDatasets = location.pathname.includes('/organizations');
-<<<<<<< HEAD
   const isProgress = location.pathname.includes('/progress');
   const experimentSelectedClass = isExperiments ? 'selected' : '';
   const taskSelectedClass = isTask ? 'selected' : '';
   const datasetSelectedClass = isDatasets ? 'selected' : '';
   const progressSelectedClass = isProgress ? 'selected' : '';
-=======
-  const experimentSelectedClass = isExperiments ? 'selected' : '';
-  const taskSelectedClass = isTask ? 'selected' : '';
-  const datasetSelectedClass = isDatasets ? 'selected' : '';
->>>>>>> 938b764 (Added dataset functionalities)
 
   const navigate = useNavigate();
 
@@ -58,7 +52,6 @@ const Repository = () => {
               <p>Datasets</p>
             </div>
           </Link>
-<<<<<<< HEAD
           <Link to={'/dashboard/progress'}>
             <div
                 className={`repository__panel__items__item ${progressSelectedClass}`}
@@ -67,8 +60,6 @@ const Repository = () => {
               <p>Progress</p>
             </div>
           </Link>
-=======
->>>>>>> 938b764 (Added dataset functionalities)
         </div>
         <div className="repository__panel__sign-out">
           <button

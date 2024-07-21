@@ -4,9 +4,6 @@ import time
 import calendar
 from dbClient import mongo_client
 from projectHandler import projectHandler
-<<<<<<< HEAD
-
-=======
 import zenoh
 import os
 import io
@@ -14,29 +11,18 @@ import zipfile
 import pylibmagic
 import magic
 import hashlib
->>>>>>> 938b764 (Added dataset functionalities)
 
 class DatasetHandler(object):
     def __init__(self):
         self.client = mongo_client
         self.db = self.client.experiments
         self.collection_dataset = self.db.dataset
-<<<<<<< HEAD
-
-    def get_datasets(self, proj_id):
-        query = {"project_id": proj_id}
-        documents = self.collection_dataset.find(query).sort(
-            "update_at", pymongo.DESCENDING
-        )
-        # return documents in JSON format
-=======
         self.zenoh_session = zenoh.open(zenoh.Config.from_file("zenoh-client.json5"))
         self.zenoh_key_expr = "projects/{proj_id}/datasets/{dataset_id}"
 
     def get_datasets(self, proj_id):
         query = {"project_id": proj_id}
         documents = self.collection_dataset.find(query).sort("update_at", pymongo.DESCENDING)
->>>>>>> 938b764 (Added dataset functionalities)
         return json.loads(json.dumps(list(documents), default=str))
 
     def dataset_exists(self, dataset_id):
@@ -52,23 +38,6 @@ class DatasetHandler(object):
         documents = self.collection_dataset.find(query)
         return json.loads(json.dumps(documents[0], default=str))
 
-<<<<<<< HEAD
-    def create_dataset(self, username, proj_id, dataset_name):
-        # TODO Orestis to upload file to Zenoh here
-        create_time = calendar.timegm(time.gmtime())  # get current time in seconds
-        dataset_id = username + "-" + dataset_name.replace(" ", "") + "-" + str(create_time)
-        query = {
-            "id_dataset": dataset_id,
-            "project_id": proj_id,
-            "name": dataset_name,
-            "create_at": create_time,
-            "update_at": create_time
-        }
-        self.collection_dataset.insert_one(query)
-
-        projectHandler.update_project_update_at(proj_id)
-        return dataset_id
-=======
     def create_dataset(self, username, proj_id, dataset_name, dataset_content, description, metadata):
         try:
             create_time = calendar.timegm(time.gmtime())
@@ -113,37 +82,28 @@ class DatasetHandler(object):
         except Exception as e:
             print(f"Failed to create dataset: {e}")
             return None
->>>>>>> 938b764 (Added dataset functionalities)
 
     def delete_dataset(self, dataset_id, proj_id):
         query = {"id_dataset": dataset_id}
         self.collection_dataset.delete_one(query)
 
-<<<<<<< HEAD
-=======
         key_expr = self.zenoh_key_expr.format(proj_id=proj_id, dataset_id=dataset_id)
         try:
             self.zenoh_session.delete(key_expr)
         except Exception as e:
             print(f"Failed to delete dataset from Zenoh: {e}")
 
->>>>>>> 938b764 (Added dataset functionalities)
         projectHandler.update_project_update_at(proj_id)
 
     def delete_datasets(self, proj_id):
         query = {"project_id": proj_id}
         self.collection_dataset.delete_many(query)
-<<<<<<< HEAD
-
-    # FIXME: bad implementation
-=======
         key_expr = self.zenoh_key_expr.format(proj_id=proj_id, dataset_id="*")
         try:
             self.zenoh_session.delete(key_expr)
         except Exception as e:
             print(f"Failed to delete datasets from Zenoh: {e}")
 
->>>>>>> 938b764 (Added dataset functionalities)
     def detect_duplicate(self, proj_id, dataset_name):
         query = {"project_id": proj_id, "name": dataset_name}
         documents = self.collection_dataset.find(query)
@@ -161,8 +121,6 @@ class DatasetHandler(object):
         projectHandler.update_project_update_at(proj_id)
         return True
 
-<<<<<<< HEAD
-=======
     def update_dataset_description(self, dataset_id, proj_id, dataset_description):
         update_time = calendar.timegm(time.gmtime())
         query = {"id_dataset": dataset_id}
@@ -215,6 +173,5 @@ class DatasetHandler(object):
         except Exception as e:
             print(f"Failed to download datasets from Zenoh: {e}")
             return None
->>>>>>> 938b764 (Added dataset functionalities)
 
 datasetHandler = DatasetHandler()

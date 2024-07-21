@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-version: '1.0'
-=======
 version: '3.9'
->>>>>>> 938b764 (Added dataset functionalities)
 
 services:
   mongo:
@@ -16,22 +12,16 @@ services:
       - '27017:27017'
     volumes:
       - ~/mongo/data:/data/db
-<<<<<<< HEAD
-=======
     networks:
       - my_net
->>>>>>> 938b764 (Added dataset functionalities)
 
   auth-service:
     build: ./server-authentication
     container_name: auth-service
     ports:
       - '5555:5555'
-<<<<<<< HEAD
-=======
     networks:
       - my_net
->>>>>>> 938b764 (Added dataset functionalities)
 
   exp-service:
     build: ./server-experiment
@@ -41,24 +31,18 @@ services:
     depends_on:
       - auth-service
       - emf-cloud-service
-<<<<<<< HEAD
-=======
       - zenoh1
       - mongo
     networks:
       - my_net
->>>>>>> 938b764 (Added dataset functionalities)
 
   emf-cloud-service:
     build: ./server-emf-cloud
     container_name: emf-cloud-service
     ports:
       - '8081:8081'
-<<<<<<< HEAD
-=======
     networks:
       - my_net
->>>>>>> 938b764 (Added dataset functionalities)
 
   web-app:
     build: ./web-app
@@ -68,11 +52,8 @@ services:
     depends_on:
       - auth-service
       - exp-service
-<<<<<<< HEAD
-=======
     networks:
       - my_net
->>>>>>> 938b764 (Added dataset functionalities)
 
   nginx:
     image: nginx:latest
@@ -85,8 +66,6 @@ services:
       - auth-service
       - exp-service
     restart: always
-<<<<<<< HEAD
-=======
     networks:
       - my_net
 
@@ -146,4 +125,3 @@ networks:
       config:
         - subnet: 192.168.10.0/24
           gateway: 192.168.10.1
->>>>>>> 938b764 (Added dataset functionalities)

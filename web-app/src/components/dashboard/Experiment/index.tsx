@@ -306,8 +306,4 @@ const Project = () => {
   );
 };
 
-<<<<<<< HEAD
 export default Project;
-=======
-export default Project;
->>>>>>> 938b764 (Added dataset functionalities)

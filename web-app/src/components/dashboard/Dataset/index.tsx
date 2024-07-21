@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import './style.scss';
-import { useState, useEffect, useCallback } from 'react';
-import useRequest from '../../../hooks/useRequest';
-import { message } from '../../../utils/message';
-import {timeNow, timestampToDate} from '../../../utils/timeToDate';
-import { useLocation } from 'react-router-dom';
-import Popover from '../../general/Popover';
-import {
-  defaultDataset,
-} from '../../../types/dataset';
-=======
 import React, { useState, useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Popover from '../../general/Popover';
@@ -18,42 +6,19 @@ import { message } from '../../../utils/message';
 import { timeNow, timestampToDate } from '../../../utils/timeToDate';
 import './style.scss';
 import { defaultDataset } from '../../../types/dataset';
->>>>>>> 938b764 (Added dataset functionalities)
 import {
   DatasetsResponseType,
   CreateDatasetResponseType,
   UpdateDatasetNameResponseType,
-<<<<<<< HEAD
-  DeleteExperimentResponseType,
-=======
   UpdateDatasetDescriptionResponseType, 
   DeleteExperimentResponseType,
   DownloadResponseType
->>>>>>> 938b764 (Added dataset functionalities)
 } from '../../../types/requests';
 
 const Organization = () => {
   const [datasets, setDatasets] = useState([defaultDataset]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [newDatasetName, setNewDatasetName] = useState('');
-<<<<<<< HEAD
-
-  const [showPopover, setShowPopover] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
-
-  const isDatasetEmpty = datasets.length === 0;
-
-  // make sure the expID is the same as the one in the url
-  const projID = useLocation().pathname.split('/')[3];
-
-  const { request: datasetsRequest } = useRequest<DatasetsResponseType>();
-  const { request: createDatasetRequest } =
-      useRequest<CreateDatasetResponseType>();
-  const { request: updateDatasetNameRequest } =
-    useRequest<UpdateDatasetNameResponseType>();
-  const { request: deleteDatasetRequest } =
-    useRequest<DeleteExperimentResponseType>();
-=======
   const [newFile, setNewFile] = useState<File | null>(null);
   const [newDescription, setNewDescription] = useState('');
   const [editingDescriptionIndex, setEditingDescriptionIndex] = useState<number | null>(null); 
@@ -71,7 +36,6 @@ const Organization = () => {
   const { request: updateDatasetDescriptionRequest } = useRequest<UpdateDatasetDescriptionResponseType>(); 
   const { request: deleteDatasetRequest } = useRequest<DeleteExperimentResponseType>();
   const { request: downloadDatasetRequest } = useRequest<DownloadResponseType>();
->>>>>>> 938b764 (Added dataset functionalities)
 
   const getDatasets = useCallback(() => {
     datasetsRequest({
@@ -95,31 +59,6 @@ const Organization = () => {
   }, [getDatasets]);
 
   const postNewDataset = useCallback(
-<<<<<<< HEAD
-      (name: string) => {
-        createDatasetRequest({
-          url: `/exp/projects/${projID}/datasets/create`,
-          method: 'POST',
-          data: {
-            dataset_name: name,
-          },
-        })
-            .then(() => {
-              getDatasets();
-            })
-            .catch((error) => {
-              if (error.message) {
-                message(error.message);
-              }
-            });
-      },
-      [projID, createDatasetRequest, getDatasets]
-  );
-
-  const handleNewDataset = () => {
-    // TODO Orestis to refactor and add custom form for uploading files here
-    postNewDataset(`dataset-${timeNow()}`);
-=======
     (name: string, file: File | null, description: string, metadata: any) => {
       const formData = new FormData();
       formData.append('dataset_name', name);
@@ -176,7 +115,6 @@ const Organization = () => {
 
   const removeMetadataField = (index: number) => {
     setMetadata(metadata.filter((_, i) => i !== index));
->>>>>>> 938b764 (Added dataset functionalities)
   };
 
   const handleStartEditingName = (index: number) => {
@@ -208,13 +146,7 @@ const Organization = () => {
       return;
     }
     updateDatasetNameRequest({
-<<<<<<< HEAD
-      url: `/exp/projects/${projID}/datasets/${
-        datasets[editingIndex!].id_dataset
-      }/update/name`,
-=======
       url: `/exp/projects/${projID}/datasets/${datasets[editingIndex!].id_dataset}/update/name`,
->>>>>>> 938b764 (Added dataset functionalities)
       method: 'PUT',
       data: {
         dataset_name: newDatasetName,
@@ -228,27 +160,6 @@ const Organization = () => {
       });
   };
 
-<<<<<<< HEAD
-  const handleDownloadDataset = (index: number) => {
-    // TODO Orestis/Ilias to implement this at the end
-    console.log(index)
-    message("TODO")
-  };
-
-  function handleOpenPopover(index: number) {
-    setDeleteIndex(index);
-    setShowPopover(true);
-  }
-
-  function closeMask() {
-    setShowPopover(false);
-    setDeleteIndex(null);
-  }
-
-  function handleCancelDelete() {
-    closeMask();
-  }
-=======
   const handleStartEditingDescription = (index: number) => {
     setNewDescription(datasets[index].description);
     if (editingDescriptionIndex === null) {
@@ -337,7 +248,6 @@ const Organization = () => {
   const handleCancelDelete = () => {
     closeMask();
   };
->>>>>>> 938b764 (Added dataset functionalities)
 
   const handleDeleteDataset = () => {
     if (deleteIndex === null) return;
@@ -354,16 +264,6 @@ const Organization = () => {
     closeMask();
   };
 
-<<<<<<< HEAD
-  return (
-    <div className="specification">
-      <div className="specification__functions" style={{width: 0}}>
-        <button
-          className="specification__functions__new"
-          onClick={handleNewDataset}
-        >
-          new dataset
-=======
   const openAddDatasetPopover = () => {
     setShowAddPopover(true);
   };
@@ -377,29 +277,16 @@ const Organization = () => {
       <div className="specification__functions" style={{ margin: 10 }}>
         <button className="specification__functions__new" onClick={openAddDatasetPopover}>
           Add Dataset
->>>>>>> 938b764 (Added dataset functionalities)
         </button>
       </div>
       <div className="specification__contents">
         <div className="specification__contents__header">
-<<<<<<< HEAD
-          <div className="specification__contents__header__title">
-            Dataset
-          </div>
-          <div className="specification__contents__header__create">
-            Created At
-          </div>
-          <div className="specification__contents__header__update">
-            Updated At
-          </div>
-=======
           <div className="specification__contents__header__title">Dataset</div>
           <div className="specification__contents__header__description">Description</div>
           <div className="specification__contents__header__file_type">Filetype</div>
           <div className="specification__contents__header__file_size">Filesize (Bytes)</div>
           <div className="specification__contents__header__create">Created At</div>
           <div className="specification__contents__header__update">Updated At</div>
->>>>>>> 938b764 (Added dataset functionalities)
           <div className="specification__contents__header__operations"></div>
         </div>
         {isDatasetEmpty ? (
@@ -409,11 +296,7 @@ const Organization = () => {
           </div>
         ) : (
           <ul className="specification__contents__list">
-<<<<<<< HEAD
-            {datasets.map((specification, index) => (
-=======
             {datasets.map((dataset, index) => (
->>>>>>> 938b764 (Added dataset functionalities)
               <li className="specification__contents__list__item" key={index}>
                 <div className="specification__contents__list__item__title">
                   <span
@@ -431,20 +314,6 @@ const Organization = () => {
                       onKeyUp={handleKeyPress}
                     />
                   ) : (
-<<<<<<< HEAD
-                    <p>{specification.name}</p>
-                  )}
-                </div>
-                <div className="specification__contents__list__item__create">
-                  {timestampToDate(specification.create_at)}
-                </div>
-                <div className="specification__contents__list__item__update">
-                  {timestampToDate(specification.update_at)}
-                </div>
-                <div className="specification__contents__list__item__operations">
-                  <span
-                    title="download graphical model"
-=======
                     <p>{dataset.name}</p>
                   )}
                 </div>
@@ -482,18 +351,13 @@ const Organization = () => {
                 <div className="specification__contents__list__item__operations">
                   <span
                     title="download dataset"
->>>>>>> 938b764 (Added dataset functionalities)
                     className="iconfont editable"
                     onClick={() => handleDownloadDataset(index)}
                   >
                     &#xe627;
                   </span>
                   <span
-<<<<<<< HEAD
-                    title="delete this specification"
-=======
                     title="delete this dataset"
->>>>>>> 938b764 (Added dataset functionalities)
                     className="iconfont editable"
                     onClick={() => handleOpenPopover(index)}
                   >
@@ -508,23 +372,6 @@ const Organization = () => {
       <Popover show={showPopover} blankClickCallback={closeMask}>
         <div className="popover__delete">
           <div className="popover__delete__text">
-<<<<<<< HEAD
-            {`Do you want to delete ${
-              deleteIndex ? datasets[deleteIndex].name : 'the dataset'
-            }?`}
-          </div>
-          <div className="popover__delete__buttons">
-            <button
-              className="popover__delete__buttons__cancel"
-              onClick={handleCancelDelete}
-            >
-              cancel
-            </button>
-            <button
-              className="popover__delete__buttons__confirm"
-              onClick={handleDeleteDataset}
-            >
-=======
             {`Do you want to delete ${deleteIndex !== null ? datasets[deleteIndex].name : 'the dataset'}?`}
           </div>
           <div className="popover__delete__buttons">
@@ -532,14 +379,11 @@ const Organization = () => {
               cancel
             </button>
             <button className="popover__delete__buttons__confirm" onClick={handleDeleteDataset}>
->>>>>>> 938b764 (Added dataset functionalities)
               confirm
             </button>
           </div>
         </div>
       </Popover>
-<<<<<<< HEAD
-=======
       <Popover show={showAddPopover} blankClickCallback={closeMask}>
         <div className="popover__add-dataset">
           <div className="popover__add-dataset__text">Add New Dataset</div>
@@ -601,7 +445,6 @@ const Organization = () => {
           </div>
         </div>
       </Popover>
->>>>>>> 938b764 (Added dataset functionalities)
     </div>
   );
 };
