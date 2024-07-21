@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # ExtremeXP portal
+=======
+# ExtremeXP-graphical-editor (Working in Progress)
+>>>>>>> 938b764 (Added dataset functionalities)
 
 ## Build
 

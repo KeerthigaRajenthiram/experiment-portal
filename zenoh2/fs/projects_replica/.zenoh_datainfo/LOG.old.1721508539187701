@@ -1,0 +1,372 @@
+2024/07/20-20:46:09.207932 140673936579976 RocksDB version: 7.9.2
+2024/07/20-20:46:09.208306 140673936579976 Compile date 2022-12-22 09:30:39
+2024/07/20-20:46:09.211271 140673936579976 DB SUMMARY
+2024/07/20-20:46:09.211281 140673936579976 DB Session ID:  I1DR9TUOGJ903A94VO4J
+2024/07/20-20:46:09.249470 140673936579976 CURRENT file:  CURRENT
+2024/07/20-20:46:09.249478 140673936579976 IDENTITY file:  IDENTITY
+2024/07/20-20:46:09.250261 140673936579976 MANIFEST file:  MANIFEST-000417 size: 835 Bytes
+2024/07/20-20:46:09.250269 140673936579976 SST files in /root/.zenoh/fs/projects_replica/.zenoh_datainfo dir, Total Num: 3, files: 000211.sst 000226.sst 000247.sst 
+2024/07/20-20:46:09.250289 140673936579976 Write Ahead Log file in /root/.zenoh/fs/projects_replica/.zenoh_datainfo: 000248.log size: 0 ; 000252.log size: 0 ; 000256.log size: 0 ; 000260.log size: 0 ; 000264.log size: 0 ; 000268.log size: 0 ; 000272.log size: 0 ; 000276.log size: 0 ; 000280.log size: 0 ; 000284.log size: 0 ; 000288.log size: 0 ; 000292.log size: 0 ; 000296.log size: 0 ; 000300.log size: 0 ; 000304.log size: 0 ; 000308.log size: 0 ; 000312.log size: 0 ; 000316.log size: 0 ; 000320.log size: 0 ; 000324.log size: 0 ; 000328.log size: 0 ; 000332.log size: 0 ; 000336.log size: 0 ; 000340.log size: 0 ; 000344.log size: 0 ; 000348.log size: 0 ; 000352.log size: 0 ; 000356.log size: 0 ; 000360.log size: 0 ; 000364.log size: 0 ; 000368.log size: 0 ; 000372.log size: 0 ; 000376.log size: 0 ; 000380.log size: 0 ; 000384.log size: 0 ; 000388.log size: 0 ; 000392.log size: 0 ; 000396.log size: 0 ; 000400.log size: 0 ; 000404.log size: 0 ; 000408.log size: 0 ; 000412.log size: 0 ; 000416.log size: 125 ; 
+2024/07/20-20:46:09.250313 140673936579976                         Options.error_if_exists: 0
+2024/07/20-20:46:09.250316 140673936579976                       Options.create_if_missing: 1
+2024/07/20-20:46:09.250318 140673936579976                         Options.paranoid_checks: 1
+2024/07/20-20:46:09.250320 140673936579976             Options.flush_verify_memtable_count: 1
+2024/07/20-20:46:09.250322 140673936579976                               Options.track_and_verify_wals_in_manifest: 0
+2024/07/20-20:46:09.250323 140673936579976        Options.verify_sst_unique_id_in_manifest: 1
+2024/07/20-20:46:09.250325 140673936579976                                     Options.env: 0x7ff12af68020
+2024/07/20-20:46:09.250328 140673936579976                                      Options.fs: PosixFileSystem
+2024/07/20-20:46:09.250330 140673936579976                                Options.info_log: 0x7ff12b004cb0
+2024/07/20-20:46:09.250331 140673936579976                Options.max_file_opening_threads: 16
+2024/07/20-20:46:09.250333 140673936579976                              Options.statistics: 0
+2024/07/20-20:46:09.250335 140673936579976                               Options.use_fsync: 0
+2024/07/20-20:46:09.250337 140673936579976                       Options.max_log_file_size: 0
+2024/07/20-20:46:09.250339 140673936579976                  Options.max_manifest_file_size: 1073741824
+2024/07/20-20:46:09.250341 140673936579976                   Options.log_file_time_to_roll: 0
+2024/07/20-20:46:09.250343 140673936579976                       Options.keep_log_file_num: 1000
+2024/07/20-20:46:09.250345 140673936579976                    Options.recycle_log_file_num: 0
+2024/07/20-20:46:09.250347 140673936579976                         Options.allow_fallocate: 1
+2024/07/20-20:46:09.250348 140673936579976                        Options.allow_mmap_reads: 0
+2024/07/20-20:46:09.250350 140673936579976                       Options.allow_mmap_writes: 0
+2024/07/20-20:46:09.250352 140673936579976                        Options.use_direct_reads: 0
+2024/07/20-20:46:09.250354 140673936579976                        Options.use_direct_io_for_flush_and_compaction: 0
+2024/07/20-20:46:09.250356 140673936579976          Options.create_missing_column_families: 0
+2024/07/20-20:46:09.250358 140673936579976                              Options.db_log_dir: 
+2024/07/20-20:46:09.250360 140673936579976                                 Options.wal_dir: 
+2024/07/20-20:46:09.250362 140673936579976                Options.table_cache_numshardbits: 6
+2024/07/20-20:46:09.250365 140673936579976                         Options.WAL_ttl_seconds: 0
+2024/07/20-20:46:09.250367 140673936579976                       Options.WAL_size_limit_MB: 0
+2024/07/20-20:46:09.250369 140673936579976                        Options.max_write_batch_group_size_bytes: 1048576
+2024/07/20-20:46:09.250371 140673936579976             Options.manifest_preallocation_size: 4194304
+2024/07/20-20:46:09.250373 140673936579976                     Options.is_fd_close_on_exec: 1
+2024/07/20-20:46:09.250374 140673936579976                   Options.advise_random_on_open: 1
+2024/07/20-20:46:09.250376 140673936579976                    Options.db_write_buffer_size: 0
+2024/07/20-20:46:09.250378 140673936579976                    Options.write_buffer_manager: 0x7ff131724c80
+2024/07/20-20:46:09.250380 140673936579976         Options.access_hint_on_compaction_start: 1
+2024/07/20-20:46:09.250382 140673936579976           Options.random_access_max_buffer_size: 1048576
+2024/07/20-20:46:09.250384 140673936579976                      Options.use_adaptive_mutex: 0
+2024/07/20-20:46:09.250386 140673936579976                            Options.rate_limiter: 0
+2024/07/20-20:46:09.250390 140673936579976     Options.sst_file_manager.rate_bytes_per_sec: 0
+2024/07/20-20:46:09.250391 140673936579976                       Options.wal_recovery_mode: 2
+2024/07/20-20:46:09.250393 140673936579976                  Options.enable_thread_tracking: 0
+2024/07/20-20:46:09.250395 140673936579976                  Options.enable_pipelined_write: 0
+2024/07/20-20:46:09.250397 140673936579976                  Options.unordered_write: 0
+2024/07/20-20:46:09.250399 140673936579976         Options.allow_concurrent_memtable_write: 1
+2024/07/20-20:46:09.250401 140673936579976      Options.enable_write_thread_adaptive_yield: 1
+2024/07/20-20:46:09.250402 140673936579976             Options.write_thread_max_yield_usec: 100
+2024/07/20-20:46:09.250404 140673936579976            Options.write_thread_slow_yield_usec: 3
+2024/07/20-20:46:09.250406 140673936579976                               Options.row_cache: None
+2024/07/20-20:46:09.250408 140673936579976                              Options.wal_filter: None
+2024/07/20-20:46:09.250410 140673936579976             Options.avoid_flush_during_recovery: 0
+2024/07/20-20:46:09.250412 140673936579976             Options.allow_ingest_behind: 0
+2024/07/20-20:46:09.250414 140673936579976             Options.two_write_queues: 0
+2024/07/20-20:46:09.250415 140673936579976             Options.manual_wal_flush: 0
+2024/07/20-20:46:09.250417 140673936579976             Options.wal_compression: 0
+2024/07/20-20:46:09.250419 140673936579976             Options.atomic_flush: 0
+2024/07/20-20:46:09.250421 140673936579976             Options.avoid_unnecessary_blocking_io: 0
+2024/07/20-20:46:09.250423 140673936579976                 Options.persist_stats_to_disk: 0
+2024/07/20-20:46:09.250425 140673936579976                 Options.write_dbid_to_manifest: 0
+2024/07/20-20:46:09.250427 140673936579976                 Options.log_readahead_size: 0
+2024/07/20-20:46:09.250428 140673936579976                 Options.file_checksum_gen_factory: Unknown
+2024/07/20-20:46:09.250430 140673936579976                 Options.best_efforts_recovery: 0
+2024/07/20-20:46:09.250432 140673936579976                Options.max_bgerror_resume_count: 2147483647
+2024/07/20-20:46:09.250434 140673936579976            Options.bgerror_resume_retry_interval: 1000000
+2024/07/20-20:46:09.250436 140673936579976             Options.allow_data_in_errors: 0
+2024/07/20-20:46:09.250438 140673936579976             Options.db_host_id: __hostname__
+2024/07/20-20:46:09.250440 140673936579976             Options.enforce_single_del_contracts: true
+2024/07/20-20:46:09.250442 140673936579976             Options.max_background_jobs: 2
+2024/07/20-20:46:09.250443 140673936579976             Options.max_background_compactions: -1
+2024/07/20-20:46:09.250445 140673936579976             Options.max_subcompactions: 1
+2024/07/20-20:46:09.250447 140673936579976             Options.avoid_flush_during_shutdown: 0
+2024/07/20-20:46:09.250450 140673936579976           Options.writable_file_max_buffer_size: 1048576
+2024/07/20-20:46:09.250452 140673936579976             Options.delayed_write_rate : 16777216
+2024/07/20-20:46:09.250453 140673936579976             Options.max_total_wal_size: 0
+2024/07/20-20:46:09.250455 140673936579976             Options.delete_obsolete_files_period_micros: 21600000000
+2024/07/20-20:46:09.250457 140673936579976                   Options.stats_dump_period_sec: 600
+2024/07/20-20:46:09.250459 140673936579976                 Options.stats_persist_period_sec: 600
+2024/07/20-20:46:09.250461 140673936579976                 Options.stats_history_buffer_size: 1048576
+2024/07/20-20:46:09.250463 140673936579976                          Options.max_open_files: -1
+2024/07/20-20:46:09.250465 140673936579976                          Options.bytes_per_sync: 0
+2024/07/20-20:46:09.250467 140673936579976                      Options.wal_bytes_per_sync: 0
+2024/07/20-20:46:09.250468 140673936579976                   Options.strict_bytes_per_sync: 0
+2024/07/20-20:46:09.250470 140673936579976       Options.compaction_readahead_size: 0
+2024/07/20-20:46:09.250472 140673936579976                  Options.max_background_flushes: -1
+2024/07/20-20:46:09.250474 140673936579976 Compression algorithms supported:
+2024/07/20-20:46:09.250476 140673936579976 	kZSTDNotFinalCompression supported: 1
+2024/07/20-20:46:09.256584 140673936579976 	kZSTD supported: 1
+2024/07/20-20:46:09.256596 140673936579976 	kXpressCompression supported: 0
+2024/07/20-20:46:09.256599 140673936579976 	kLZ4HCCompression supported: 1
+2024/07/20-20:46:09.256601 140673936579976 	kLZ4Compression supported: 1
+2024/07/20-20:46:09.256603 140673936579976 	kBZip2Compression supported: 1
+2024/07/20-20:46:09.256605 140673936579976 	kZlibCompression supported: 1
+2024/07/20-20:46:09.256607 140673936579976 	kSnappyCompression supported: 1
+2024/07/20-20:46:09.256618 140673936579976 Fast CRC32 supported: Not supported on x86
+2024/07/20-20:46:09.256620 140673936579976 DMutex implementation: pthread_mutex_t
+2024/07/20-20:46:09.264038 140673936579976 [db/version_set.cc:5527] Recovering from manifest file: /root/.zenoh/fs/projects_replica/.zenoh_datainfo/MANIFEST-000417
+2024/07/20-20:46:09.281985 140673936579976 [db/column_family.cc:630] --------------- Options for column family [default]:
+2024/07/20-20:46:09.281994 140673936579976               Options.comparator: leveldb.BytewiseComparator
+2024/07/20-20:46:09.281997 140673936579976           Options.merge_operator: None
+2024/07/20-20:46:09.281999 140673936579976        Options.compaction_filter: None
+2024/07/20-20:46:09.282001 140673936579976        Options.compaction_filter_factory: None
+2024/07/20-20:46:09.282003 140673936579976  Options.sst_partitioner_factory: None
+2024/07/20-20:46:09.282005 140673936579976         Options.memtable_factory: SkipListFactory
+2024/07/20-20:46:09.282007 140673936579976            Options.table_factory: BlockBasedTable
+2024/07/20-20:46:09.282056 140673936579976            table_factory options:   flush_block_policy_factory: FlushBlockBySizePolicyFactory (0x7ff12af7ef80)
+  cache_index_and_filter_blocks: 0
+  cache_index_and_filter_blocks_with_high_priority: 1
+  pin_l0_filter_and_index_blocks_in_cache: 0
+  pin_top_level_index_and_filter: 1
+  index_type: 0
+  data_block_index_type: 0
+  index_shortening: 1
+  data_block_hash_table_util_ratio: 0.750000
+  checksum: 4
+  no_block_cache: 0
+  block_cache: 0x7ff12a1d0240
+  block_cache_name: LRUCache
+  block_cache_options:
+    capacity : 8388608
+    num_shard_bits : 4
+    strict_capacity_limit : 0
+    memory_allocator : None
+    high_pri_pool_ratio: 0.000
+    low_pri_pool_ratio: 0.000
+  block_cache_compressed: 0
+  persistent_cache: 0
+  block_size: 4096
+  block_size_deviation: 10
+  block_restart_interval: 16
+  index_block_restart_interval: 1
+  metadata_block_size: 4096
+  partition_filters: 0
+  use_delta_encoding: 1
+  filter_policy: nullptr
+  whole_key_filtering: 1
+  verify_compression: 0
+  read_amp_bytes_per_bit: 0
+  format_version: 5
+  enable_index_compression: 1
+  block_align: 0
+  max_auto_readahead_size: 262144
+  prepopulate_block_cache: 0
+  initial_auto_readahead_size: 8192
+  num_file_reads_for_auto_readahead: 2
+2024/07/20-20:46:09.282065 140673936579976        Options.write_buffer_size: 67108864
+2024/07/20-20:46:09.282067 140673936579976  Options.max_write_buffer_number: 2
+2024/07/20-20:46:09.282069 140673936579976          Options.compression: Snappy
+2024/07/20-20:46:09.282071 140673936579976                  Options.bottommost_compression: Disabled
+2024/07/20-20:46:09.282073 140673936579976       Options.prefix_extractor: nullptr
+2024/07/20-20:46:09.282075 140673936579976   Options.memtable_insert_with_hint_prefix_extractor: nullptr
+2024/07/20-20:46:09.282077 140673936579976             Options.num_levels: 7
+2024/07/20-20:46:09.282079 140673936579976        Options.min_write_buffer_number_to_merge: 1
+2024/07/20-20:46:09.282081 140673936579976     Options.max_write_buffer_number_to_maintain: 0
+2024/07/20-20:46:09.282082 140673936579976     Options.max_write_buffer_size_to_maintain: 0
+2024/07/20-20:46:09.282084 140673936579976            Options.bottommost_compression_opts.window_bits: -14
+2024/07/20-20:46:09.282086 140673936579976                  Options.bottommost_compression_opts.level: 32767
+2024/07/20-20:46:09.282088 140673936579976               Options.bottommost_compression_opts.strategy: 0
+2024/07/20-20:46:09.282090 140673936579976         Options.bottommost_compression_opts.max_dict_bytes: 0
+2024/07/20-20:46:09.282092 140673936579976         Options.bottommost_compression_opts.zstd_max_train_bytes: 0
+2024/07/20-20:46:09.282094 140673936579976         Options.bottommost_compression_opts.parallel_threads: 1
+2024/07/20-20:46:09.282096 140673936579976                  Options.bottommost_compression_opts.enabled: false
+2024/07/20-20:46:09.282098 140673936579976         Options.bottommost_compression_opts.max_dict_buffer_bytes: 0
+2024/07/20-20:46:09.282100 140673936579976         Options.bottommost_compression_opts.use_zstd_dict_trainer: true
+2024/07/20-20:46:09.282102 140673936579976            Options.compression_opts.window_bits: -14
+2024/07/20-20:46:09.282104 140673936579976                  Options.compression_opts.level: 32767
+2024/07/20-20:46:09.282105 140673936579976               Options.compression_opts.strategy: 0
+2024/07/20-20:46:09.282107 140673936579976         Options.compression_opts.max_dict_bytes: 0
+2024/07/20-20:46:09.282109 140673936579976         Options.compression_opts.zstd_max_train_bytes: 0
+2024/07/20-20:46:09.282111 140673936579976         Options.compression_opts.use_zstd_dict_trainer: true
+2024/07/20-20:46:09.282113 140673936579976         Options.compression_opts.parallel_threads: 1
+2024/07/20-20:46:09.282115 140673936579976                  Options.compression_opts.enabled: false
+2024/07/20-20:46:09.282117 140673936579976         Options.compression_opts.max_dict_buffer_bytes: 0
+2024/07/20-20:46:09.282118 140673936579976      Options.level0_file_num_compaction_trigger: 4
+2024/07/20-20:46:09.282120 140673936579976          Options.level0_slowdown_writes_trigger: 20
+2024/07/20-20:46:09.282122 140673936579976              Options.level0_stop_writes_trigger: 36
+2024/07/20-20:46:09.282124 140673936579976                   Options.target_file_size_base: 67108864
+2024/07/20-20:46:09.282126 140673936579976             Options.target_file_size_multiplier: 1
+2024/07/20-20:46:09.282128 140673936579976                Options.max_bytes_for_level_base: 268435456
+2024/07/20-20:46:09.282130 140673936579976 Options.level_compaction_dynamic_level_bytes: 0
+2024/07/20-20:46:09.282131 140673936579976          Options.max_bytes_for_level_multiplier: 10.000000
+2024/07/20-20:46:09.282138 140673936579976 Options.max_bytes_for_level_multiplier_addtl[0]: 1
+2024/07/20-20:46:09.282141 140673936579976 Options.max_bytes_for_level_multiplier_addtl[1]: 1
+2024/07/20-20:46:09.282143 140673936579976 Options.max_bytes_for_level_multiplier_addtl[2]: 1
+2024/07/20-20:46:09.282145 140673936579976 Options.max_bytes_for_level_multiplier_addtl[3]: 1
+2024/07/20-20:46:09.282148 140673936579976 Options.max_bytes_for_level_multiplier_addtl[4]: 1
+2024/07/20-20:46:09.282150 140673936579976 Options.max_bytes_for_level_multiplier_addtl[5]: 1
+2024/07/20-20:46:09.282152 140673936579976 Options.max_bytes_for_level_multiplier_addtl[6]: 1
+2024/07/20-20:46:09.282154 140673936579976       Options.max_sequential_skip_in_iterations: 8
+2024/07/20-20:46:09.282155 140673936579976                    Options.max_compaction_bytes: 1677721600
+2024/07/20-20:46:09.282157 140673936579976   Options.ignore_max_compaction_bytes_for_input: true
+2024/07/20-20:46:09.282159 140673936579976                        Options.arena_block_size: 1048576
+2024/07/20-20:46:09.282161 140673936579976   Options.soft_pending_compaction_bytes_limit: 68719476736
+2024/07/20-20:46:09.282163 140673936579976   Options.hard_pending_compaction_bytes_limit: 274877906944
+2024/07/20-20:46:09.282165 140673936579976                Options.disable_auto_compactions: 0
+2024/07/20-20:46:09.282168 140673936579976                        Options.compaction_style: kCompactionStyleLevel
+2024/07/20-20:46:09.282171 140673936579976                          Options.compaction_pri: kMinOverlappingRatio
+2024/07/20-20:46:09.282173 140673936579976 Options.compaction_options_universal.size_ratio: 1
+2024/07/20-20:46:09.282174 140673936579976 Options.compaction_options_universal.min_merge_width: 2
+2024/07/20-20:46:09.282176 140673936579976 Options.compaction_options_universal.max_merge_width: 4294967295
+2024/07/20-20:46:09.282178 140673936579976 Options.compaction_options_universal.max_size_amplification_percent: 200
+2024/07/20-20:46:09.282180 140673936579976 Options.compaction_options_universal.compression_size_percent: -1
+2024/07/20-20:46:09.282182 140673936579976 Options.compaction_options_universal.stop_style: kCompactionStopStyleTotalSize
+2024/07/20-20:46:09.282184 140673936579976 Options.compaction_options_fifo.max_table_files_size: 1073741824
+2024/07/20-20:46:09.282186 140673936579976 Options.compaction_options_fifo.allow_compaction: 0
+2024/07/20-20:46:09.282191 140673936579976                   Options.table_properties_collectors: 
+2024/07/20-20:46:09.282193 140673936579976                   Options.inplace_update_support: 0
+2024/07/20-20:46:09.282195 140673936579976                 Options.inplace_update_num_locks: 10000
+2024/07/20-20:46:09.282197 140673936579976               Options.memtable_prefix_bloom_size_ratio: 0.000000
+2024/07/20-20:46:09.282199 140673936579976               Options.memtable_whole_key_filtering: 0
+2024/07/20-20:46:09.282201 140673936579976   Options.memtable_huge_page_size: 0
+2024/07/20-20:46:09.282203 140673936579976                           Options.bloom_locality: 0
+2024/07/20-20:46:09.282205 140673936579976                    Options.max_successive_merges: 0
+2024/07/20-20:46:09.282207 140673936579976                Options.optimize_filters_for_hits: 0
+2024/07/20-20:46:09.282209 140673936579976                Options.paranoid_file_checks: 0
+2024/07/20-20:46:09.282211 140673936579976                Options.force_consistency_checks: 1
+2024/07/20-20:46:09.282212 140673936579976                Options.report_bg_io_stats: 0
+2024/07/20-20:46:09.282214 140673936579976                               Options.ttl: 2592000
+2024/07/20-20:46:09.282216 140673936579976          Options.periodic_compaction_seconds: 0
+2024/07/20-20:46:09.282218 140673936579976  Options.preclude_last_level_data_seconds: 0
+2024/07/20-20:46:09.282220 140673936579976    Options.preserve_internal_time_seconds: 0
+2024/07/20-20:46:09.282222 140673936579976                       Options.enable_blob_files: false
+2024/07/20-20:46:09.282224 140673936579976                           Options.min_blob_size: 0
+2024/07/20-20:46:09.282226 140673936579976                          Options.blob_file_size: 268435456
+2024/07/20-20:46:09.282228 140673936579976                   Options.blob_compression_type: NoCompression
+2024/07/20-20:46:09.282229 140673936579976          Options.enable_blob_garbage_collection: false
+2024/07/20-20:46:09.282232 140673936579976      Options.blob_garbage_collection_age_cutoff: 0.250000
+2024/07/20-20:46:09.282234 140673936579976 Options.blob_garbage_collection_force_threshold: 1.000000
+2024/07/20-20:46:09.282236 140673936579976          Options.blob_compaction_readahead_size: 0
+2024/07/20-20:46:09.282238 140673936579976                Options.blob_file_starting_level: 0
+2024/07/20-20:46:09.282240 140673936579976 Options.experimental_mempurge_threshold: 0.000000
+2024/07/20-20:46:09.303677 140673936579976 [db/version_set.cc:5566] Recovered from manifest file:/root/.zenoh/fs/projects_replica/.zenoh_datainfo/MANIFEST-000417 succeeded,manifest_file_number is 417, next_file_number is 419, last_sequence is 46, log_number is 413,prev_log_number is 0,max_column_family is 0,min_log_number_to_keep is 244
+2024/07/20-20:46:09.303687 140673936579976 [db/version_set.cc:5581] Column family [default] (ID 0), log number is 413
+2024/07/20-20:46:09.311600 140673936579976 [db/db_impl/db_impl_open.cc:539] DB ID: c7cb7fc7-e595-4ad9-a363-8309bbd2b40e
+2024/07/20-20:46:09.318165 140673936579976 EVENT_LOG_v1 {"time_micros": 1721508369318156, "job": 1, "event": "recovery_started", "wal_files": [248, 252, 256, 260, 264, 268, 272, 276, 280, 284, 288, 292, 296, 300, 304, 308, 312, 316, 320, 324, 328, 332, 336, 340, 344, 348, 352, 356, 360, 364, 368, 372, 376, 380, 384, 388, 392, 396, 400, 404, 408, 412, 416]}
+2024/07/20-20:46:09.318174 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #248 since it is older than min log to keep #413
+2024/07/20-20:46:09.318176 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #252 since it is older than min log to keep #413
+2024/07/20-20:46:09.318179 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #256 since it is older than min log to keep #413
+2024/07/20-20:46:09.318181 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #260 since it is older than min log to keep #413
+2024/07/20-20:46:09.318182 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #264 since it is older than min log to keep #413
+2024/07/20-20:46:09.318184 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #268 since it is older than min log to keep #413
+2024/07/20-20:46:09.318186 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #272 since it is older than min log to keep #413
+2024/07/20-20:46:09.318188 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #276 since it is older than min log to keep #413
+2024/07/20-20:46:09.318189 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #280 since it is older than min log to keep #413
+2024/07/20-20:46:09.318191 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #284 since it is older than min log to keep #413
+2024/07/20-20:46:09.318193 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #288 since it is older than min log to keep #413
+2024/07/20-20:46:09.318194 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #292 since it is older than min log to keep #413
+2024/07/20-20:46:09.318196 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #296 since it is older than min log to keep #413
+2024/07/20-20:46:09.318198 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #300 since it is older than min log to keep #413
+2024/07/20-20:46:09.318199 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #304 since it is older than min log to keep #413
+2024/07/20-20:46:09.318201 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #308 since it is older than min log to keep #413
+2024/07/20-20:46:09.318203 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #312 since it is older than min log to keep #413
+2024/07/20-20:46:09.318204 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #316 since it is older than min log to keep #413
+2024/07/20-20:46:09.318206 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #320 since it is older than min log to keep #413
+2024/07/20-20:46:09.318208 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #324 since it is older than min log to keep #413
+2024/07/20-20:46:09.318215 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #328 since it is older than min log to keep #413
+2024/07/20-20:46:09.318218 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #332 since it is older than min log to keep #413
+2024/07/20-20:46:09.318219 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #336 since it is older than min log to keep #413
+2024/07/20-20:46:09.318221 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #340 since it is older than min log to keep #413
+2024/07/20-20:46:09.318223 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #344 since it is older than min log to keep #413
+2024/07/20-20:46:09.318224 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #348 since it is older than min log to keep #413
+2024/07/20-20:46:09.318226 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #352 since it is older than min log to keep #413
+2024/07/20-20:46:09.318228 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #356 since it is older than min log to keep #413
+2024/07/20-20:46:09.318229 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #360 since it is older than min log to keep #413
+2024/07/20-20:46:09.318231 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #364 since it is older than min log to keep #413
+2024/07/20-20:46:09.318233 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #368 since it is older than min log to keep #413
+2024/07/20-20:46:09.318234 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #372 since it is older than min log to keep #413
+2024/07/20-20:46:09.318236 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #376 since it is older than min log to keep #413
+2024/07/20-20:46:09.318238 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #380 since it is older than min log to keep #413
+2024/07/20-20:46:09.318239 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #384 since it is older than min log to keep #413
+2024/07/20-20:46:09.318241 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #388 since it is older than min log to keep #413
+2024/07/20-20:46:09.318243 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #392 since it is older than min log to keep #413
+2024/07/20-20:46:09.318244 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #396 since it is older than min log to keep #413
+2024/07/20-20:46:09.318246 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #400 since it is older than min log to keep #413
+2024/07/20-20:46:09.318248 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #404 since it is older than min log to keep #413
+2024/07/20-20:46:09.318249 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #408 since it is older than min log to keep #413
+2024/07/20-20:46:09.318251 140673936579976 [db/db_impl/db_impl_open.cc:1029] Skipping log #412 since it is older than min log to keep #413
+2024/07/20-20:46:09.318255 140673936579976 [db/db_impl/db_impl_open.cc:1043] Recovering log #416 mode 2
+2024/07/20-20:46:09.340661 140673936579976 EVENT_LOG_v1 {"time_micros": 1721508369340605, "cf_name": "default", "job": 1, "event": "table_file_creation", "file_number": 420, "file_size": 1169, "file_checksum": "", "file_checksum_func_name": "Unknown", "smallest_seqno": 47, "largest_seqno": 47, "table_properties": {"data_size": 127, "index_size": 107, "index_partitions": 0, "top_level_index_size": 0, "index_key_is_user_key": 1, "index_value_is_delta_encoded": 1, "filter_size": 0, "raw_key_size": 98, "raw_average_key_size": 98, "raw_value_size": 13, "raw_average_value_size": 13, "num_data_blocks": 1, "num_entries": 1, "num_filter_entries": 0, "num_deletions": 0, "num_merge_operands": 0, "num_range_deletions": 0, "format_version": 0, "fixed_key_len": 0, "filter_policy": "", "column_family_name": "default", "column_family_id": 0, "comparator": "leveldb.BytewiseComparator", "merge_operator": "nullptr", "prefix_extractor_name": "nullptr", "property_collectors": "[]", "compression": "Snappy", "compression_options": "window_bits=-14; level=32767; strategy=0; max_dict_bytes=0; zstd_max_train_bytes=0; enabled=0; max_dict_buffer_bytes=0; use_zstd_dict_trainer=1; ", "creation_time": 1721508369, "oldest_key_time": 0, "file_creation_time": 0, "slow_compression_estimated_data_size": 0, "fast_compression_estimated_data_size": 0, "db_id": "c7cb7fc7-e595-4ad9-a363-8309bbd2b40e", "db_session_id": "I1DR9TUOGJ903A94VO4J", "orig_file_number": 420, "seqno_to_time_mapping": "N/A"}}
+2024/07/20-20:46:09.344932 140673936579976 EVENT_LOG_v1 {"time_micros": 1721508369344926, "job": 1, "event": "recovery_finished"}
+2024/07/20-20:46:09.346791 140673936579976 [db/version_set.cc:5047] Creating manifest 422
+2024/07/20-20:46:09.400296 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000416.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.402246 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000412.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.405555 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000408.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.407548 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000404.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.409294 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000400.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.411001 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000396.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.412318 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000392.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.413352 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000388.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.415026 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000384.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.416586 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000380.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.418288 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000376.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.420352 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000372.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.421756 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000368.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.423421 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000364.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.425033 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000360.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.427244 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000356.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.428697 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000352.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.429808 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000348.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.431037 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000344.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.432586 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000340.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.434164 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000336.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.435673 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000332.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.438776 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000328.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.440406 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000324.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.442550 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000320.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.443774 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000316.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.444926 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000312.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.446158 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000308.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.447302 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000304.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.448863 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000300.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.450709 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000296.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.451885 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000292.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.452816 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000288.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.453992 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000284.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.455459 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000280.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.456535 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000276.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.457675 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000272.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.459231 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000268.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.460510 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000264.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.461757 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000260.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.463058 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000256.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.464339 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000252.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.465597 140673936579976 [file/delete_scheduler.cc:74] Deleted file /root/.zenoh/fs/projects_replica/.zenoh_datainfo/000248.log immediately, rate_bytes_per_sec 0, total_trash_size 0 max_trash_db_ratio 0.250000
+2024/07/20-20:46:09.465984 140673936579976 [db/db_impl/db_impl_open.cc:1987] SstFileManager instance 0x7ff12af82660
+2024/07/20-20:46:09.468194 140673936579976 DB pointer 0x7ff124c77180
+2024/07/20-20:46:09.468756 140673680251696 [db/db_impl/db_impl.cc:1109] ------- DUMPING STATS -------
+2024/07/20-20:46:09.468767 140673680251696 [db/db_impl/db_impl.cc:1111] 
+** DB Stats **
+Uptime(secs): 0.2 total, 0.2 interval
+Cumulative writes: 0 writes, 0 keys, 0 commit groups, 0.0 writes per commit group, ingest: 0.00 GB, 0.00 MB/s
+Cumulative WAL: 0 writes, 0 syncs, 0.00 writes per sync, written: 0.00 GB, 0.00 MB/s
+Cumulative stall: 00:00:0.000 H:M:S, 0.0 percent
+Interval writes: 0 writes, 0 keys, 0 commit groups, 0.0 writes per commit group, ingest: 0.00 MB, 0.00 MB/s
+Interval WAL: 0 writes, 0 syncs, 0.00 writes per sync, written: 0.00 GB, 0.00 MB/s
+Interval stall: 00:00:0.000 H:M:S, 0.0 percent
+
+** Compaction Stats [default] **
+Level    Files   Size     Score Read(GB)  Rn(GB) Rnp1(GB) Write(GB) Wnew(GB) Moved(GB) W-Amp Rd(MB/s) Wr(MB/s) Comp(sec) CompMergeCPU(sec) Comp(cnt) Avg(sec) KeyIn KeyDrop Rblob(GB) Wblob(GB)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  L0      3/0    3.43 KB   0.8      0.0     0.0      0.0       0.0      0.0       0.0   1.0      0.0      0.1      0.02              0.00         1    0.021       0      0       0.0       0.0
+  L1      1/0    1.62 KB   0.0      0.0     0.0      0.0       0.0      0.0       0.0   0.0      0.0      0.0      0.00              0.00         0    0.000       0      0       0.0       0.0
+ Sum      4/0    5.05 KB   0.0      0.0     0.0      0.0       0.0      0.0       0.0   1.0      0.0      0.1      0.02              0.00         1    0.021       0      0       0.0       0.0
+ Int      0/0    0.00 KB   0.0      0.0     0.0      0.0       0.0      0.0       0.0   1.0      0.0      0.1      0.02              0.00         1    0.021       0      0       0.0       0.0
+
+** Compaction Stats [default] **
+Priority    Files   Size     Score Read(GB)  Rn(GB) Rnp1(GB) Write(GB) Wnew(GB) Moved(GB) W-Amp Rd(MB/s) Wr(MB/s) Comp(sec) CompMergeCPU(sec) Comp(cnt) Avg(sec) KeyIn KeyDrop Rblob(GB) Wblob(GB)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+User      0/0    0.00 KB   0.0      0.0     0.0      0.0       0.0      0.0       0.0   0.0      0.0      0.1      0.02              0.00         1    0.021       0      0       0.0       0.0
+
+Blob file count: 0, total size: 0.0 GB, garbage size: 0.0 GB, space amp: 0.0
+
+Uptime(secs): 0.2 total, 0.2 interval
+Flush(GB): cumulative 0.000, interval 0.000
+AddFile(GB): cumulative 0.000, interval 0.000
+AddFile(Total Files): cumulative 0, interval 0
+AddFile(L0 Files): cumulative 0, interval 0
+AddFile(Keys): cumulative 0, interval 0
+Cumulative compaction: 0.00 GB write, 0.01 MB/s write, 0.00 GB read, 0.00 MB/s read, 0.0 seconds
+Interval compaction: 0.00 GB write, 0.01 MB/s write, 0.00 GB read, 0.00 MB/s read, 0.0 seconds
+Stalls(count): 0 level0_slowdown, 0 level0_slowdown_with_compaction, 0 level0_numfiles, 0 level0_numfiles_with_compaction, 0 stop for pending_compaction_bytes, 0 slowdown for pending_compaction_bytes, 0 memtable_compaction, 0 memtable_slowdown, interval 0 total count
+Block cache LRUCache@0x7ff12a1d0240#1 capacity: 8.00 MB usage: 0.08 KB table_size: 256 occupancy: 87 collections: 1 last_copies: 0 last_secs: 2.1e-05 secs_since: 0
+Block cache entry stats(count,size,portion): Misc(1,0.00 KB,0%)
+
+** File Read Latency Histogram By Level [default] **

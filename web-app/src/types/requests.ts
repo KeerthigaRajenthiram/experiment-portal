@@ -137,6 +137,13 @@ export type UpdateDatasetNameResponseType = {
   message: string;
 };
 
+<<<<<<< HEAD
+=======
+export type UpdateDatasetDescriptionResponseType= {
+  message: string;
+};
+
+>>>>>>> 938b764 (Added dataset functionalities)
 export type ConvertorResponseType = {
   message: string;
   data: {
@@ -144,3 +151,14 @@ export type ConvertorResponseType = {
     xmi: string;
   };
 };
+<<<<<<< HEAD
+=======
+
+export type DownloadResponseType = {
+  data:Blob ;
+  headers: {
+    'content-disposition': string;
+    'content-type': string;
+  };
+};
+>>>>>>> 938b764 (Added dataset functionalities)

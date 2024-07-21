@@ -9,7 +9,10 @@ import Register from './containers/Account/Register';
 import Dashboard from './containers/Dashboard';
 import Experiments from './containers/Dashboard/Experiments';
 import Datasets from './containers/Dashboard/Datasets';
+<<<<<<< HEAD
 import Progress from './containers/Dashboard/Progress';
+=======
+>>>>>>> 938b764 (Added dataset functionalities)
 import Project from './components/dashboard/Experiment';
 import Organization from './components/dashboard/Dataset';
 import Tasks from './containers/Dashboard/Tasks';
@@ -70,10 +73,13 @@ const router = createBrowserRouter([
           },
         ],
       },
+<<<<<<< HEAD
       {
         path: '/dashboard/progress',
         element: <Progress />,
       },
+=======
+>>>>>>> 938b764 (Added dataset functionalities)
     ],
   },
   {
