@@ -403,25 +403,39 @@ def delete_dataset(proj_id, dataset_id):
 @app.route("/exp/projects/<proj_id>/datasets/<dataset_id>/download", methods=["GET"])
 def download_dataset(proj_id, dataset_id):
     try:
+        # Retrieve the dataset from the handler
         result = datasetHandler.download_dataset(proj_id, dataset_id)
+        
+        # Check if the result is valid
         if result:
             file_content = result.get('content')
             mime_type = result.get('mime_type', 'application/octet-stream')
+            
+            # Determine the file extension based on MIME type
             extension = mimetypes.guess_extension(mime_type) or ''
             filename = f"{dataset_id}{extension}"
+            
+            # Create and return the response with the file
             response = make_response(send_file(
                 file_content,
                 as_attachment=True,
                 download_name=filename,
                 mimetype=mime_type
             ))
-            response.headers["content-disposition"] = f"attachment; filename={filename}"
-            response.headers["content-type"] = mime_type
+            
+            # Set appropriate headers for file download
+            response.headers["Content-Disposition"] = f"attachment; filename={filename}"
+            response.headers["Content-Type"] = mime_type
             return response
+        
+        # If the result is not valid, return an error message
         else:
             return jsonify({"message": "Failed to download dataset"}), 500
+    
+    # Catch and handle any exceptions
     except Exception as e:
         return jsonify({"message": str(e)}), 500
+
 
 
 @app.route("/exp/projects/<proj_id>/datasets/download", methods=["GET"])

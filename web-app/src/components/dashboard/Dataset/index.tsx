@@ -11,9 +11,9 @@ import {
   CreateDatasetResponseType,
   UpdateDatasetNameResponseType,
   UpdateDatasetDescriptionResponseType, 
-  DeleteExperimentResponseType,
-  DownloadResponseType
+  DeleteExperimentResponseType
 } from '../../../types/requests';
+import axios from 'axios';
 
 const Organization = () => {
   const [datasets, setDatasets] = useState([defaultDataset]);
@@ -35,7 +35,7 @@ const Organization = () => {
   const { request: updateDatasetNameRequest } = useRequest<UpdateDatasetNameResponseType>();
   const { request: updateDatasetDescriptionRequest } = useRequest<UpdateDatasetDescriptionResponseType>(); 
   const { request: deleteDatasetRequest } = useRequest<DeleteExperimentResponseType>();
-  const { request: downloadDatasetRequest } = useRequest<DownloadResponseType>();
+ 
 
   const getDatasets = useCallback(() => {
     datasetsRequest({
@@ -199,40 +199,74 @@ const Organization = () => {
       });
   };
 
+  // Define the type of the mimeTypesToExtensions dictionary
+  interface MimeTypesToExtensions {
+    [key: string]: string;
+  }
+
+  // Initialize the dictionary with specific MIME types and extensions
+  const mimeTypesToExtensions: MimeTypesToExtensions = {
+    'application/pdf': 'pdf',
+    'application/msword': 'doc',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+    'application/vnd.ms-excel': 'xls',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+    'application/vnd.ms-powerpoint': 'ppt',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
+    'text/plain': 'txt',
+    'text/html': 'html',
+    'application/json': 'json',
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/gif': 'gif',
+    'application/zip': 'zip',
+    'application/x-tar': 'tar',
+    'application/x-rar-compressed': 'rar',
+    // Add more MIME types and their extensions as needed
+  };
+
   const handleDownloadDataset = (index: number) => {
     const datasetId = datasets[index].id_dataset;
-    const datasetFileType = datasets[index].file_type || 'application/octet-stream'; 
-    downloadDatasetRequest({
+    const datasetFileType = datasets[index].file_type || 'application/octet-stream';
+  
+    axios({
       url: `/exp/projects/${projID}/datasets/${datasetId}/download`,
       method: 'GET',
-      responseType: 'blob', // Specify blob response type
+      responseType: 'blob', // Important for downloading files
     })
-    .then((response: DownloadResponseType) => {
-      console.log('Response:', response); // Log the entire response
-      const url = window.URL.createObjectURL(response.data);
-      const link = document.createElement('a');
-      link.href = url;
-      // Extract filename from content-disposition header or create a default filename
-      const contentDisposition = response.headers['content-disposition'];
-      let filename = `${datasetId}.${datasetFileType.split('/')[1]}`; // Default filename with file extension
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
-        if (filenameMatch && filenameMatch[1]) {
-          filename = filenameMatch[1].replace(/"/g, '');
+      .then((response) => {
+        console.log('Response:', response);
+        const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+        const link = document.createElement('a');
+        link.href = url;
+  
+        // Extract filename from content-disposition header or create a default filename
+        const contentDisposition = response.headers['content-disposition'];
+        let extension = mimeTypesToExtensions[datasetFileType] || 'bin'; // Get the correct extension
+        let filename = `${datasetId}.${extension}`; // Default filename with file extension
+  
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+          if (filenameMatch && filenameMatch[1]) {
+            filename = filenameMatch[1].replace(/"/g, '');
+          }
         }
-      }
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url); // Clean up after download
-      console.log({ type: 'success', message: 'File downloaded successfully.' });
-    })
-    .catch((error) => {
-      console.error('Download error:', error); // Log the error
-      console.log({ type: 'danger', message: error.response?.data?.message || error.message });
-    });
+  
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+  
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url); // Clean up after download
+  
+        console.log({ type: 'success', message: 'File downloaded successfully.' });
+      })
+      .catch((error) => {
+        console.error('Download error:', error); // Log the error
+        console.log({ type: 'danger', message: error.response?.data?.message || error.message });
+      });
   };
+ 
  
 
   const handleOpenPopover = (index: number) => {
