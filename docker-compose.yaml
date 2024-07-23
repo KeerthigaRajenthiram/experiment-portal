@@ -10,12 +10,16 @@ services:
       - '27017:27017'
     volumes:
       - ~/mongo/data:/data/db
+    networks:
+      - my_net
 
   auth-service:
     build: ./server-authentication
     container_name: auth-service
     ports:
       - '5555:5555'
+    networks:
+      - my_net
 
   exp-service:
     build: ./server-experiment
@@ -25,12 +29,18 @@ services:
     depends_on:
       - auth-service
       - emf-cloud-service
+      - zenoh1
+      - mongo
+    networks:
+      - my_net
 
   emf-cloud-service:
     build: ./server-emf-cloud
     container_name: emf-cloud-service
     ports:
       - '8081:8081'
+    networks:
+      - my_net
 
   web-app:
     build: ./web-app
@@ -40,6 +50,8 @@ services:
     depends_on:
       - auth-service
       - exp-service
+    networks:
+      - my_net
 
   nginx:
     image: nginx:latest
@@ -52,3 +64,49 @@ services:
       - auth-service
       - exp-service
     restart: always
+    networks:
+      - my_net
+
+  zenoh1:
+    image: eclipse/zenoh
+    container_name: zenoh1
+    command: -c /root/.zenoh/zenoh-fs.json5 --adminspace-permissions rw
+    restart: unless-stopped
+    ports:
+      - 17447:7447
+      - 18000:8000
+    volumes:
+      - ./zenoh1:/root/.zenoh
+    environment:
+      - RUST_LOG=debug
+      - ZENOH_BACKEND_FS_ROOT=/root/.zenoh/fs
+      - RUST_BACKTRACE=full
+    networks:
+      my_net:
+        ipv4_address: 192.168.10.12
+
+  zenoh2:
+    image: eclipse/zenoh
+    container_name: zenoh2
+    command: -c /root/.zenoh/zenoh-fs.json5 --adminspace-permissions rw
+    restart: unless-stopped
+    ports:
+      - 27447:7447  # Adjust port mapping as needed
+      - 28000:8000  # Adjust port mapping as needed
+    volumes:
+      - ./zenoh2:/root/.zenoh  # Adjust volume mapping as needed
+    environment:
+      - RUST_LOG=debug
+      - ZENOH_BACKEND_FS_ROOT=/root/.zenoh/fs  # Use a different directory for storage
+    networks:
+      my_net:
+        ipv4_address: 192.168.10.15  # Use a unique IP address within the network
+
+networks:
+  my_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/24
+          gateway: 192.168.10.1

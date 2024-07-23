@@ -1,5 +1,6 @@
-from flask import Flask, request, g
+from flask import Flask, request, g, send_file, jsonify, make_response
 from flask_cors import CORS, cross_origin
+from werkzeug.utils import secure_filename
 from userAuthHandler import userAuthHandler
 from projectHandler import projectHandler
 from experimentHandler import experimentHandler
@@ -7,6 +8,10 @@ from categoryHandler import categoryHandler
 from taskHandler import taskHandler
 from datasetHandler import datasetHandler
 from convertorHandler import convertorHandler
+import logging
+import json
+import mimetypes
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 cors = CORS(app)  # cors is added in advance to allow cors requests
@@ -97,6 +102,7 @@ def delete_project(proj_id):
         return {"message": "project does not exist"}, 404
     projectHandler.delete_project(proj_id)
     experimentHandler.delete_experiments(proj_id)
+    datasetHandler.delete_datasets(proj_id)
     return {"message": "project deleted"}, 204
 
 
@@ -321,16 +327,40 @@ def get_datasets(proj_id):
 @app.route("/exp/projects/<proj_id>/datasets/create", methods=["OPTIONS", "POST"])
 @cross_origin()
 def create_dataset(proj_id):
-    dataset_name = request.json["dataset_name"]
-    if datasetHandler.detect_duplicate(proj_id, dataset_name):
-        return {
-                   "error": ERROR_DUPLICATE,
-                   "message": "Dataset name already exists",
-               }, 409
-    res = datasetHandler.create_dataset(
-        g.username, proj_id, dataset_name
+    # Ensure the dataset_name parameter is present
+    if "dataset_name" not in request.form:
+        return jsonify({"error": "Missing dataset_name parameter"}), 400
+    if "description" not in request.form:
+        return jsonify({"error": "Missing dataset_name parameter"}), 400
+    description=request.form.get('description')
+    dataset_name = request.form["dataset_name"]
+    # Ensure the file is part of the request
+    if "file" not in request.files:
+        return jsonify({"error": "No file part in the request"}), 400
+    file = request.files["file"]
+    filename = secure_filename(file.filename)
+    dataset_content = file.read()
+    # Handle metadata if it is provided
+    metadata = request.form.get('metadata')
+    if metadata:
+        try:
+            metadata = json.loads(metadata)
+        except json.JSONDecodeError:
+            return jsonify({"error": "Invalid JSON format for metadata"}), 400
+    else:
+        metadata = []
+
+    # Call the datasetHandler method
+    dataset_id = datasetHandler.create_dataset(
+        g.username, proj_id, dataset_name, dataset_content,description, metadata
     )
-    return {"message": "Dataset created", "data": {"id_dataset": res}}, 201
+
+    if dataset_id:
+        return jsonify({"message": "Dataset created", "data": {"id_dataset": dataset_id}}), 201
+    else:
+        return jsonify({"error": "Failed to create dataset"}), 500
+
+
 
 
 @app.route(
@@ -348,6 +378,15 @@ def update_dataset_name(proj_id, dataset_id):
     datasetHandler.update_dataset_name(dataset_id, proj_id, dataset_name)
     return {"message": "dataset name updated"}, 200
 
+@app.route(
+    "/exp/projects/<proj_id>/datasets/<dataset_id>/update/description",
+    methods=["OPTIONS", "PUT"],
+)
+@cross_origin()
+def update_dataset_description(proj_id, dataset_id):
+    dataset_description = request.json["description"]
+    datasetHandler.update_dataset_description(dataset_id, proj_id, dataset_description)
+    return {"message": "dataset description updated"}, 200
 
 @app.route(
     "/exp/projects/<proj_id>/datasets/<dataset_id>/delete",
@@ -360,6 +399,55 @@ def delete_dataset(proj_id, dataset_id):
     datasetHandler.delete_dataset(dataset_id, proj_id)
     return {"message": "dataset deleted"}, 204
 
+
+@app.route("/exp/projects/<proj_id>/datasets/<dataset_id>/download", methods=["GET"])
+def download_dataset(proj_id, dataset_id):
+    try:
+        # Retrieve the dataset from the handler
+        result = datasetHandler.download_dataset(proj_id, dataset_id)
+        
+        # Check if the result is valid
+        if result:
+            file_content = result.get('content')
+            mime_type = result.get('mime_type', 'application/octet-stream')
+            
+            # Determine the file extension based on MIME type
+            extension = mimetypes.guess_extension(mime_type) or ''
+            filename = f"{dataset_id}{extension}"
+            
+            # Create and return the response with the file
+            response = make_response(send_file(
+                file_content,
+                as_attachment=True,
+                download_name=filename,
+                mimetype=mime_type
+            ))
+            
+            # Set appropriate headers for file download
+            response.headers["Content-Disposition"] = f"attachment; filename={filename}"
+            response.headers["Content-Type"] = mime_type
+            return response
+        
+        # If the result is not valid, return an error message
+        else:
+            return jsonify({"message": "Failed to download dataset"}), 500
+    
+    # Catch and handle any exceptions
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+
+
+@app.route("/exp/projects/<proj_id>/datasets/download", methods=["GET"])
+@cross_origin()
+def download_datasets(proj_id):
+    result = datasetHandler.download_datasets(proj_id)
+    if result:
+        zip_file = result["zip_file"]
+        zip_name = result["zip_name"]
+        return send_file(zip_file, as_attachment=True, download_name=zip_name)
+    else:
+        return jsonify({"error": "Failed to download datasets"}), 500
 
 # EXECUTION
 @app.route("/exp/execute/convert/<exp_id>", methods=["OPTIONS", "POST"])

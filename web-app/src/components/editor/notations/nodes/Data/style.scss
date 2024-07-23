@@ -4,7 +4,7 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  width: 100px;
+  width: 120px;
   height: auto;
   background-color: #fff;
   border: 1px solid #000;
@@ -37,7 +37,25 @@
     border: none;
     border-bottom: 1px solid #000;
     font-size: 0.8em;
+    font-weight: bold;
+    text-align: center;
   }
+
+  &__dropdown {
+    font-size: 0.8em;
+    padding: 0.01rem;
+    border: none;
+    border-bottom: 1px solid #000;
+  }
+
+  &__dropdown > select {
+    font-size: 1.0em;
+  }
+
+  &__dropdown > select > option {
+    font-size: 1.4em;
+  }
+
 }
 
 // draw a triangle on the top right corner

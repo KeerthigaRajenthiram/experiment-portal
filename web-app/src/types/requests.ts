@@ -137,10 +137,22 @@ export type UpdateDatasetNameResponseType = {
   message: string;
 };
 
+export type UpdateDatasetDescriptionResponseType= {
+  message: string;
+};
+
 export type ConvertorResponseType = {
   message: string;
   data: {
     json: object;
     xmi: string;
+  };
+};
+
+export type DownloadResponseType = {
+  data:Blob ;
+  headers: {
+    'content-disposition': string;
+    'content-type': string;
   };
 };

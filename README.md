@@ -1,4 +1,4 @@
-# ExtremeXP portal
+# ExtremeXP-graphical-editor (Working in Progress)
 
 ## Build
 

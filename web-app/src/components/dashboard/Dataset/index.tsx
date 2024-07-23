@@ -1,40 +1,41 @@
-import './style.scss';
-import { useState, useEffect, useCallback } from 'react';
-import useRequest from '../../../hooks/useRequest';
-import { message } from '../../../utils/message';
-import {timeNow, timestampToDate} from '../../../utils/timeToDate';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Popover from '../../general/Popover';
-import {
-  defaultDataset,
-} from '../../../types/dataset';
+import useRequest from '../../../hooks/useRequest';
+import { message } from '../../../utils/message';
+import { timeNow, timestampToDate } from '../../../utils/timeToDate';
+import './style.scss';
+import { defaultDataset } from '../../../types/dataset';
 import {
   DatasetsResponseType,
   CreateDatasetResponseType,
   UpdateDatasetNameResponseType,
-  DeleteExperimentResponseType,
+  UpdateDatasetDescriptionResponseType, 
+  DeleteExperimentResponseType
 } from '../../../types/requests';
+import axios from 'axios';
 
 const Organization = () => {
   const [datasets, setDatasets] = useState([defaultDataset]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [newDatasetName, setNewDatasetName] = useState('');
-
+  const [newFile, setNewFile] = useState<File | null>(null);
+  const [newDescription, setNewDescription] = useState('');
+  const [editingDescriptionIndex, setEditingDescriptionIndex] = useState<number | null>(null); 
   const [showPopover, setShowPopover] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+  const [showAddPopover, setShowAddPopover] = useState(false);
+  const [metadata, setMetadata] = useState([{ name: '', value: '', description: '' }]);
 
   const isDatasetEmpty = datasets.length === 0;
-
-  // make sure the expID is the same as the one in the url
   const projID = useLocation().pathname.split('/')[3];
 
   const { request: datasetsRequest } = useRequest<DatasetsResponseType>();
-  const { request: createDatasetRequest } =
-      useRequest<CreateDatasetResponseType>();
-  const { request: updateDatasetNameRequest } =
-    useRequest<UpdateDatasetNameResponseType>();
-  const { request: deleteDatasetRequest } =
-    useRequest<DeleteExperimentResponseType>();
+  const { request: createDatasetRequest } = useRequest<CreateDatasetResponseType>();
+  const { request: updateDatasetNameRequest } = useRequest<UpdateDatasetNameResponseType>();
+  const { request: updateDatasetDescriptionRequest } = useRequest<UpdateDatasetDescriptionResponseType>(); 
+  const { request: deleteDatasetRequest } = useRequest<DeleteExperimentResponseType>();
+ 
 
   const getDatasets = useCallback(() => {
     datasetsRequest({
@@ -58,29 +59,62 @@ const Organization = () => {
   }, [getDatasets]);
 
   const postNewDataset = useCallback(
-      (name: string) => {
-        createDatasetRequest({
-          url: `/exp/projects/${projID}/datasets/create`,
-          method: 'POST',
-          data: {
-            dataset_name: name,
-          },
+    (name: string, file: File | null, description: string, metadata: any) => {
+      const formData = new FormData();
+      formData.append('dataset_name', name);
+      if (file) {
+        formData.append('file', file);
+      }
+      formData.append('description', description);
+      formData.append('metadata', JSON.stringify(metadata));
+
+      createDatasetRequest({
+        url: `/exp/projects/${projID}/datasets/create`,
+        method: 'POST',
+        data: formData,
+      })
+        .then(() => {
+          getDatasets();
+          setNewDatasetName('');
+          setNewFile(null);
+          setNewDescription('');
+          setMetadata([{ name: '', value: '', description: '' }]);
         })
-            .then(() => {
-              getDatasets();
-            })
-            .catch((error) => {
-              if (error.message) {
-                message(error.message);
-              }
-            });
-      },
-      [projID, createDatasetRequest, getDatasets]
+        .catch((error) => {
+          if (error.message) {
+            message(error.message);
+          }
+        });
+    },
+    [projID, createDatasetRequest, getDatasets, metadata]
   );
 
   const handleNewDataset = () => {
-    // TODO Orestis to refactor and add custom form for uploading files here
-    postNewDataset(`dataset-${timeNow()}`);
+    const datasetName = `dataset-${timeNow()}`;
+    if (!newDatasetName.trim()) {
+      setNewDatasetName(datasetName);
+    }
+    postNewDataset(newDatasetName, newFile, newDescription, metadata);
+    setShowAddPopover(false);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : null;
+    setNewFile(file);
+  };
+
+  const handleMetadataChange = (index: number, field: string, value: string) => {
+    const newMetadata = [...metadata];
+    newMetadata[index] = { ...newMetadata[index], [field]: value };
+    setMetadata(newMetadata);
+  };
+
+  const addMetadataField = () => {
+    setMetadata([...metadata, { name: '', value: '', description: '' }]);
+  };
+
+  const removeMetadataField = (index: number) => {
+    setMetadata(metadata.filter((_, i) => i !== index));
   };
 
   const handleStartEditingName = (index: number) => {
@@ -112,9 +146,7 @@ const Organization = () => {
       return;
     }
     updateDatasetNameRequest({
-      url: `/exp/projects/${projID}/datasets/${
-        datasets[editingIndex!].id_dataset
-      }/update/name`,
+      url: `/exp/projects/${projID}/datasets/${datasets[editingIndex!].id_dataset}/update/name`,
       method: 'PUT',
       data: {
         dataset_name: newDatasetName,
@@ -128,25 +160,128 @@ const Organization = () => {
       });
   };
 
-  const handleDownloadDataset = (index: number) => {
-    // TODO Orestis/Ilias to implement this at the end
-    console.log(index)
-    message("TODO")
+  const handleStartEditingDescription = (index: number) => {
+    setNewDescription(datasets[index].description);
+    if (editingDescriptionIndex === null) {
+      setEditingDescriptionIndex(index);
+    } else {
+      setEditingDescriptionIndex(null);
+    }
   };
 
-  function handleOpenPopover(index: number) {
+  const handleDescriptionKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      if (editingDescriptionIndex === null) return;
+      if (newDescription === '' || newDescription === datasets[editingDescriptionIndex].description) {
+        setEditingDescriptionIndex(null);
+        return;
+      }
+      updateDescription();
+      setEditingDescriptionIndex(null);
+    }
+  };
+
+  const updateDescription = () => {
+    if (newDescription === '' || editingDescriptionIndex === null) return;
+    if (newDescription === datasets[editingDescriptionIndex].description) return;
+    updateDatasetDescriptionRequest({
+      url: `/exp/projects/${projID}/datasets/${datasets[editingDescriptionIndex!].id_dataset}/update/description`,
+      method: 'PUT',
+      data: {
+        description: newDescription,
+      },
+    })
+      .then(() => {
+        getDatasets();
+      })
+      .catch((error) => {
+        message(error.response.data?.message || error.message);
+      });
+  };
+
+  // Define the type of the mimeTypesToExtensions dictionary
+  interface MimeTypesToExtensions {
+    [key: string]: string;
+  }
+
+  // Initialize the dictionary with specific MIME types and extensions
+  const mimeTypesToExtensions: MimeTypesToExtensions = {
+    'application/pdf': 'pdf',
+    'application/msword': 'doc',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+    'application/vnd.ms-excel': 'xls',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+    'application/vnd.ms-powerpoint': 'ppt',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
+    'text/plain': 'txt',
+    'text/html': 'html',
+    'application/json': 'json',
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/gif': 'gif',
+    'application/zip': 'zip',
+    'application/x-tar': 'tar',
+    'application/x-rar-compressed': 'rar',
+    // Add more MIME types and their extensions as needed
+  };
+
+  const handleDownloadDataset = (index: number) => {
+    const datasetId = datasets[index].id_dataset;
+    const datasetFileType = datasets[index].file_type || 'application/octet-stream';
+  
+    axios({
+      url: `/exp/projects/${projID}/datasets/${datasetId}/download`,
+      method: 'GET',
+      responseType: 'blob', // Important for downloading files
+    })
+      .then((response) => {
+        console.log('Response:', response);
+        const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+        const link = document.createElement('a');
+        link.href = url;
+  
+        // Extract filename from content-disposition header or create a default filename
+        const contentDisposition = response.headers['content-disposition'];
+        let extension = mimeTypesToExtensions[datasetFileType] || 'bin'; // Get the correct extension
+        let filename = `${datasetId}.${extension}`; // Default filename with file extension
+  
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+          if (filenameMatch && filenameMatch[1]) {
+            filename = filenameMatch[1].replace(/"/g, '');
+          }
+        }
+  
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+  
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url); // Clean up after download
+  
+        console.log({ type: 'success', message: 'File downloaded successfully.' });
+      })
+      .catch((error) => {
+        console.error('Download error:', error); // Log the error
+        console.log({ type: 'danger', message: error.response?.data?.message || error.message });
+      });
+  };
+ 
+ 
+
+  const handleOpenPopover = (index: number) => {
     setDeleteIndex(index);
     setShowPopover(true);
-  }
+  };
 
-  function closeMask() {
+  const closeMask = () => {
     setShowPopover(false);
-    setDeleteIndex(null);
-  }
+    setShowAddPopover(false);
+  };
 
-  function handleCancelDelete() {
+  const handleCancelDelete = () => {
     closeMask();
-  }
+  };
 
   const handleDeleteDataset = () => {
     if (deleteIndex === null) return;
@@ -163,27 +298,29 @@ const Organization = () => {
     closeMask();
   };
 
+  const openAddDatasetPopover = () => {
+    setShowAddPopover(true);
+  };
+
+  const handleCancelAddDataset = () => {
+    setShowAddPopover(false);
+  };
+
   return (
     <div className="specification">
-      <div className="specification__functions" style={{width: 0}}>
-        <button
-          className="specification__functions__new"
-          onClick={handleNewDataset}
-        >
-          new dataset
+      <div className="specification__functions" style={{ margin: 10 }}>
+        <button className="specification__functions__new" onClick={openAddDatasetPopover}>
+          Add Dataset
         </button>
       </div>
       <div className="specification__contents">
         <div className="specification__contents__header">
-          <div className="specification__contents__header__title">
-            Dataset
-          </div>
-          <div className="specification__contents__header__create">
-            Created At
-          </div>
-          <div className="specification__contents__header__update">
-            Updated At
-          </div>
+          <div className="specification__contents__header__title">Dataset</div>
+          <div className="specification__contents__header__description">Description</div>
+          <div className="specification__contents__header__file_type">Filetype</div>
+          <div className="specification__contents__header__file_size">Filesize (Bytes)</div>
+          <div className="specification__contents__header__create">Created At</div>
+          <div className="specification__contents__header__update">Updated At</div>
           <div className="specification__contents__header__operations"></div>
         </div>
         {isDatasetEmpty ? (
@@ -193,7 +330,7 @@ const Organization = () => {
           </div>
         ) : (
           <ul className="specification__contents__list">
-            {datasets.map((specification, index) => (
+            {datasets.map((dataset, index) => (
               <li className="specification__contents__list__item" key={index}>
                 <div className="specification__contents__list__item__title">
                   <span
@@ -211,25 +348,50 @@ const Organization = () => {
                       onKeyUp={handleKeyPress}
                     />
                   ) : (
-                    <p>{specification.name}</p>
+                    <p>{dataset.name}</p>
                   )}
                 </div>
+                <div className="specification__contents__list__item__description">
+                  <span
+                      title="modify the description"
+                      className="iconfont editable"
+                      onClick={() => handleStartEditingDescription(index)}
+                    >
+                      &#xe63c;
+                    </span>
+                    {editingDescriptionIndex === index ? (
+                      <input
+                        type="text"
+                        value={newDescription}
+                        onChange={(e) => setNewDescription(e.target.value)}
+                        onKeyUp={handleDescriptionKeyPress}
+                      />
+                    ) : (
+                      <p>{dataset.description}</p>
+                    )}
+                </div>
+                <div className="specification__contents__list__item__file_type">
+                  {dataset.file_type || 'Unknown'}
+                </div>
+                <div className="specification__contents__list__item__file_size">
+                  {dataset.file_size || 'Unknown'}
+                </div>
                 <div className="specification__contents__list__item__create">
-                  {timestampToDate(specification.create_at)}
+                  {timestampToDate(dataset.create_at)}
                 </div>
                 <div className="specification__contents__list__item__update">
-                  {timestampToDate(specification.update_at)}
+                  {timestampToDate(dataset.update_at)}
                 </div>
                 <div className="specification__contents__list__item__operations">
                   <span
-                    title="download graphical model"
+                    title="download dataset"
                     className="iconfont editable"
                     onClick={() => handleDownloadDataset(index)}
                   >
                     &#xe627;
                   </span>
                   <span
-                    title="delete this specification"
+                    title="delete this dataset"
                     className="iconfont editable"
                     onClick={() => handleOpenPopover(index)}
                   >
@@ -244,22 +406,75 @@ const Organization = () => {
       <Popover show={showPopover} blankClickCallback={closeMask}>
         <div className="popover__delete">
           <div className="popover__delete__text">
-            {`Do you want to delete ${
-              deleteIndex ? datasets[deleteIndex].name : 'the dataset'
-            }?`}
+            {`Do you want to delete ${deleteIndex !== null ? datasets[deleteIndex].name : 'the dataset'}?`}
           </div>
           <div className="popover__delete__buttons">
-            <button
-              className="popover__delete__buttons__cancel"
-              onClick={handleCancelDelete}
-            >
+            <button className="popover__delete__buttons__cancel" onClick={handleCancelDelete}>
               cancel
             </button>
-            <button
-              className="popover__delete__buttons__confirm"
-              onClick={handleDeleteDataset}
-            >
+            <button className="popover__delete__buttons__confirm" onClick={handleDeleteDataset}>
               confirm
+            </button>
+          </div>
+        </div>
+      </Popover>
+      <Popover show={showAddPopover} blankClickCallback={closeMask}>
+        <div className="popover__add-dataset">
+          <div className="popover__add-dataset__text">Add New Dataset</div>
+          <input
+            className="popover__add-dataset__input"
+            type="text"
+            placeholder="Enter dataset name"
+            value={newDatasetName}
+            onChange={(e) => setNewDatasetName(e.target.value)}
+          />
+          <input
+            className="popover__add-dataset__input"
+            type="text"
+            placeholder="Enter description"
+            value={newDescription}
+            onChange={(e) => setNewDescription(e.target.value)}
+          />
+          <input
+            className="popover__add-dataset__input"
+            type="file"
+            placeholder="Select file"
+            onChange={handleFileChange}
+          />
+          <div className="popover__add-dataset__text">Add Metadata</div>
+          {metadata.map((meta, index) => (
+            <div key={index} className="popover__add-dataset__metadata">
+              <button className="popover__add-dataset__metadata__remove-button" onClick={() => removeMetadataField(index)}>Remove</button>
+              <input
+                className="popover__add-dataset__metadata_input"
+                type="text"
+                placeholder="Name"
+                value={meta.name}
+                onChange={(e) => handleMetadataChange(index, 'name', e.target.value)}
+              />
+              <input
+                className="popover__add-dataset__metadata_input"
+                type="text"
+                placeholder="Value"
+                value={meta.value}
+                onChange={(e) => handleMetadataChange(index, 'value', e.target.value)}
+              />
+              <input
+                className="popover__add-dataset__metadata_input"
+                type="text"
+                placeholder="Description"
+                value={meta.description}
+                onChange={(e) => handleMetadataChange(index, 'description', e.target.value)}
+              />
+            </div>
+          ))}
+          <button className="popover__add-dataset__add-button" onClick={addMetadataField}>Add</button>
+          <div className="popover__add-dataset__buttons">
+            <button className="popover__add-dataset__buttons__cancel" onClick={handleCancelAddDataset}>
+              Cancel
+            </button>
+            <button className="popover__add-dataset__buttons__confirm" onClick={handleNewDataset}>
+              Confirm
             </button>
           </div>
         </div>

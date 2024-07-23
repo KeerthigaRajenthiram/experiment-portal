@@ -78,7 +78,7 @@ const router = createBrowserRouter([
       {
         path: '/dashboard/progress',
         element: <Progress />,
-      },
+      }
     ],
   },
   {

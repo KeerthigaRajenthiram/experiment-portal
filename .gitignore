@@ -1,3 +1,9 @@
 .idea
 .vscode
 .DS_Store
+zenoh1/fs/projects
+zenoh1/fs/projects_replica
+zenoh2/fs/projects
+zenoh2/fs/projects_replica
+zenoh1/tombstones
+zenoh2/tombstones

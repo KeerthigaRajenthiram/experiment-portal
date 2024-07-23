@@ -19,7 +19,6 @@
   button {
     width: 1.6rem;
     height: 0.35rem;
-
     background-color: $secondary-theme-color;
     color: $primary-button-text-color;
     font-size: 1.15em;
@@ -58,19 +57,25 @@
     text-align: left;
 
     &__title {
-      width: 45%;
+      width: 15%;
     }
-
+    &__description {
+      width: 20%;
+    }
+    &__file_type {
+      width: 10%;
+    }
+    &__file_size {
+      width: 10%;
+    }
     &__create {
       width: 15%;
     }
-
     &__update {
       width: 15%;
     }
-
     &__operations {
-      width: 25%;
+      width: 15%;
     }
   }
 
@@ -104,7 +109,7 @@
 
       &__title {
         display: flex;
-        width: 45%;
+        width: 15%;
         font-weight: bold;
         padding-right: 0.2rem;
         box-sizing: border-box;
@@ -135,7 +140,48 @@
           }
         }
       }
+      &__description {
+        display: flex;
+        width: 20%;
+        font-weight: bold;
+        padding-right: 0.2rem;
+        box-sizing: border-box;
 
+        .iconfont {
+          margin-right: 0.1rem;
+          color: lighten($color: #000000, $amount: 50);
+        }
+
+        .editable {
+          color: $secondary-theme-color;
+
+          &:hover {
+            cursor: pointer;
+            color: $alert-background-color;
+          }
+        }
+
+        input {
+          flex: 1;
+          border: none;
+          border-bottom: 1px solid #888888;
+          box-sizing: border-box;
+          background-color: transparent;
+
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+      &__file_type {
+        width: 10%;
+        color: lighten($color: #000000, $amount: 50);
+
+      }
+      &__file_size {
+        width: 10%;
+        color: lighten($color: #000000, $amount: 50);
+      }
       &__create {
         width: 15%;
         color: lighten($color: #000000, $amount: 50);
@@ -150,7 +196,7 @@
         display: flex;
         justify-content: flex-end;
         align-items: center;
-        width: 25%;
+        width: 15%;
 
         .iconfont {
           margin-right: 0.2rem;
@@ -173,6 +219,133 @@
           font-size: 1em;
           font-weight: bold;
         }
+      }
+    }
+  }
+}
+
+
+.popover__add-dataset {
+  width: 4rem;
+  height: auto;
+  max-height: 8rem; // Set a maximum height
+  overflow-y: auto; // Add a vertical scrollbar if content exceeds max-height
+  overflow-x: hidden; // Prevent horizontal scrolling
+
+  &__text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4rem;
+    height: 0.5rem;
+    color: darken($primary-theme-color, 40%);
+    font-size: 1.2em;
+    margin-bottom: 0.3rem; 
+  }
+
+  &__input {
+    width: 3rem;
+    height: 0.3rem;
+    margin-bottom: 0.1rem;
+    box-sizing: border-box;
+    text-align: center; 
+  }
+
+  &__metadata_input {
+    width: 2.4rem;
+    height: 0.3rem;
+    margin-bottom: 0.1rem;
+    box-sizing: border-box;
+    text-align: center; 
+  }
+
+  &__metadata {
+    position: relative;
+    border: 1px solid #ccc; 
+    padding: 0.4rem; // Padding inside the box
+    margin-bottom: 0.2rem; // Space between boxes
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+
+    &__remove-button {
+      position: absolute; 
+      bottom: 0.05rem; 
+      right: 0.05rem; 
+      color: $primary-button-text-color;
+      background-color: $alert-background-color;
+      border: none;
+      font-size: 1em;
+      cursor: pointer;
+
+      &:hover {
+        background-color: darken($alert-background-color, 20%);
+      }
+
+      &:active {
+        background-color: lighten($alert-background-color, 30%);
+        color: $primary-button-text-color;
+      }
+    }
+  }
+
+  &__add-button {
+    display: block;
+    margin: 0 0.5rem 0.5rem auto; 
+    height: 0.35rem;
+    font-size: 1em; 
+    cursor: pointer;
+    background-color: $secondary-background-color; 
+    color: $primary-button-text-color; 
+
+    &:hover {
+      background-color: darken($secondary-background-color, 20%);
+    }
+
+    &:active {
+      background-color: lighten($secondary-background-color, 30%);
+    }
+  }
+
+  &__buttons {
+    height: 0.35rem;
+    font-size: 1.2em;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+
+    &__cancel, &__confirm {
+      width: 50%;
+      height: 100%;
+      cursor: pointer;
+      font-size: 1em; 
+    }
+
+    &__cancel {
+      background-color: $cancel-background-color;
+      color: $primary-button-text-color;
+
+      &:hover {
+        background-color: darken($cancel-background-color, 20%);
+      }
+
+      &:active {
+        background-color: lighten($cancel-background-color, 30%);
+      }
+    }
+
+    &__confirm {
+      background-color: $secondary-background-color;
+      color: $primary-button-text-color;
+
+      &:hover {
+        background-color: darken($secondary-background-color, 20%);
+      }
+
+      &:active {
+        background-color: lighten($secondary-background-color, 30%);
       }
     }
   }
