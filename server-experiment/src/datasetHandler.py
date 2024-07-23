@@ -43,7 +43,7 @@ class DatasetHandler(object):
             create_time = calendar.timegm(time.gmtime())
             dataset_id = f"{username}_{dataset_name.replace(' ', '')}_{create_time}"
             key_expr = self.zenoh_key_expr.format(proj_id=proj_id, dataset_id=dataset_id)
-            
+            zenoh_node = "tcp/zenoh1:7447"
             try:
                 pub = self.zenoh_session.declare_publisher(key_expr)
                 pub.put(dataset_content)
@@ -66,7 +66,9 @@ class DatasetHandler(object):
                 "metadata": metadata, 
                 "file_hash": file_hash,
                 "file_type": file_type,
-                "file_size": file_size
+                "file_size": file_size,
+                "zenoh_node": zenoh_node,
+                "zenoh_key_expr": key_expr
             }
             try:
                 self.collection_dataset.insert_one(query)
