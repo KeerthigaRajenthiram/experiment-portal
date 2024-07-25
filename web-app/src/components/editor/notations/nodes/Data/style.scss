@@ -8,7 +8,6 @@
   height: auto;
   background-color: #fff;
   border: 1px solid #000;
-  border-bottom: none;
   color: #333;
   clip-path: polygon(
     -10% -10%,
@@ -45,7 +44,6 @@
     font-size: 0.8em;
     padding: 0.01rem;
     border: none;
-    border-bottom: 1px solid #000;
   }
 
   &__dropdown > select {
