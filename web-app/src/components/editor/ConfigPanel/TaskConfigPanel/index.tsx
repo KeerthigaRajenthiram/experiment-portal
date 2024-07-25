@@ -51,6 +51,8 @@ const TaskConfigPanel: React.FC<TaskConfigPanelProps> = ({ updateSideBar }) => {
     'AddPadding',
     'SplitData',
     'TrainModel',
+    'TrainModelNN',
+    'TrainModelRNN',
     'EvaluateModel',
   ];
 
