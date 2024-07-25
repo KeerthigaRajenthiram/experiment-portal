@@ -15,15 +15,15 @@ const Data = ({
   targetPosition = Position.Top,
 }: NodeProps) => {
   const [name, setName] = useState(data.name);
-  const [dataset, setDataset] = useState(data.dataset);
+  const [path, setPath] = useState<string | undefined>(data.path);
 
   const projID = useLocation().pathname.split('/')[3];
   const datasets = useDatasetStore((state) => state.datasets);
   const { request: datasetsRequest } = useRequest<DatasetsResponseType>();
 
   const handleSelectTask = (datasetName: string) => {
-    setDataset(datasetName);
-    data.dataset = datasetName;
+    setPath(datasetName);
+    data.path = datasetName;
   };
 
   const getDatasets = useCallback(() => {
@@ -53,7 +53,7 @@ const Data = ({
           <input
             className="node-data__input nodrag"
             type="text"
-            defaultValue="dataset"
+            defaultValue="<dataset_name>"
             value={name}
             onChange={(e) => {
               setName(e.target.value);
@@ -67,7 +67,7 @@ const Data = ({
               options={datasets.map((dataset) => dataset.name)}
               className="node-data__dropdown nodrag"
               onOptionSelected={handleSelectTask}
-              value={dataset}
+              value={path}
           />
         </label>
         <Handle
