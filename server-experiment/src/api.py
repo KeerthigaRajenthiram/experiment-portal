@@ -11,6 +11,7 @@ from convertorHandler import convertorHandler
 import logging
 import json
 import mimetypes
+import requests
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
@@ -457,6 +458,11 @@ def convert_to_source_model(exp_id):
         return {"error": ERROR_NOT_FOUND, "message": "experiment not found"}, 404
     exp = experimentHandler.get_experiment(exp_id)
     convert_res = convertorHandler.convert(exp)
+
+    app.logger.info('Executing experiment...')
+    url = 'http://exp-eng-service:5556/exp/run'
+    response = requests.post(url, json=exp)
+    app.logger.info(response.text)
 
     if not convert_res["success"]:
         return {"error": "Error converting model", "message": convert_res["error"]}, 500

@@ -105,6 +105,7 @@ services:
 networks:
   my_net:
     driver: bridge
+    name: extremexp_network
     ipam:
       driver: default
       config:
