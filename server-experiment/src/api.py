@@ -1,6 +1,5 @@
 from flask import Flask, request, g, send_file, jsonify, make_response
 from flask_cors import CORS, cross_origin
-from werkzeug.utils import secure_filename
 from userAuthHandler import userAuthHandler
 from projectHandler import projectHandler
 from experimentHandler import experimentHandler
@@ -8,15 +7,13 @@ from categoryHandler import categoryHandler
 from taskHandler import taskHandler
 from datasetHandler import datasetHandler
 from convertorHandler import convertorHandler
-import logging
 import json
-import mimetypes
 import requests
-logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 cors = CORS(app)  # cors is added in advance to allow cors requests
 app.config["CORS_HEADERS"] = "Content-Type"
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100 MB
 
 ERROR_FORBIDDEN = "Error: Forbidden"
 ERROR_DUPLICATE = "Error: Duplicate name"
@@ -326,7 +323,6 @@ def get_datasets(proj_id):
 
 
 @app.route("/exp/projects/<proj_id>/datasets/create", methods=["OPTIONS", "POST"])
-@cross_origin()
 def create_dataset(proj_id):
     # Ensure the dataset_name parameter is present
     if "dataset_name" not in request.form:
@@ -339,9 +335,6 @@ def create_dataset(proj_id):
     if "file" not in request.files:
         return jsonify({"error": "No file part in the request"}), 400
     file = request.files["file"]
-    filename = secure_filename(file.filename)
-    dataset_content = file.read()
-    # Handle metadata if it is provided
     metadata = request.form.get('metadata')
     if metadata:
         try:
@@ -353,15 +346,12 @@ def create_dataset(proj_id):
 
     # Call the datasetHandler method
     dataset_id = datasetHandler.create_dataset(
-        g.username, proj_id, dataset_name, dataset_content,description, metadata
+        g.username, proj_id, dataset_name, file, description, metadata
     )
-
     if dataset_id:
         return jsonify({"message": "Dataset created", "data": {"id_dataset": dataset_id}}), 201
     else:
         return jsonify({"error": "Failed to create dataset"}), 500
-
-
 
 
 @app.route(
@@ -402,53 +392,26 @@ def delete_dataset(proj_id, dataset_id):
 
 
 @app.route("/exp/projects/<proj_id>/datasets/<dataset_id>/download", methods=["GET"])
+@cross_origin()
 def download_dataset(proj_id, dataset_id):
     try:
-        # Retrieve the dataset from the handler
-        result = datasetHandler.download_dataset(proj_id, dataset_id)
-        
-        # Check if the result is valid
-        if result:
-            file_content = result.get('content')
-            mime_type = result.get('mime_type', 'application/octet-stream')
-            
-            # Determine the file extension based on MIME type
-            extension = mimetypes.guess_extension(mime_type) or ''
-            filename = f"{dataset_id}{extension}"
-            
-            # Create and return the response with the file
-            response = make_response(send_file(
-                file_content,
-                as_attachment=True,
-                download_name=filename,
-                mimetype=mime_type
-            ))
-            
-            # Set appropriate headers for file download
-            response.headers["Content-Disposition"] = f"attachment; filename={filename}"
-            response.headers["Content-Type"] = mime_type
-            return response
-        
-        # If the result is not valid, return an error message
+        filename, file_content,mime_type = datasetHandler.get_from_zenoh(proj_id, dataset_id)
+        if file_content:
+            return send_file(file_content,download_name=filename, as_attachment=True)
         else:
-            return jsonify({"message": "Failed to download dataset"}), 500
-    
-    # Catch and handle any exceptions
+            return {"message": "Failed to download dataset"}, 500
     except Exception as e:
-        return jsonify({"message": str(e)}), 500
-
-
+        return {"message": str(e)}, 500
 
 @app.route("/exp/projects/<proj_id>/datasets/download", methods=["GET"])
 @cross_origin()
 def download_datasets(proj_id):
-    result = datasetHandler.download_datasets(proj_id)
-    if result:
-        zip_file = result["zip_file"]
-        zip_name = result["zip_name"]
+    zip_file, zip_name = datasetHandler.get_many_from_zenoh(proj_id)
+    if zip_file:
         return send_file(zip_file, as_attachment=True, download_name=zip_name)
     else:
         return jsonify({"error": "Failed to download datasets"}), 500
+
 
 # EXECUTION
 @app.route("/exp/execute/convert/<exp_id>", methods=["OPTIONS", "POST"])

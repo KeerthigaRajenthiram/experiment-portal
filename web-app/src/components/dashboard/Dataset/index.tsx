@@ -11,7 +11,8 @@ import {
   CreateDatasetResponseType,
   UpdateDatasetNameResponseType,
   UpdateDatasetDescriptionResponseType, 
-  DeleteExperimentResponseType
+  DeleteExperimentResponseType,
+  DownloadResponseType
 } from '../../../types/requests';
 import axios from 'axios';
 
@@ -32,6 +33,7 @@ const Organization = () => {
 
   const { request: datasetsRequest } = useRequest<DatasetsResponseType>();
   const { request: createDatasetRequest } = useRequest<CreateDatasetResponseType>();
+  const { request: getDatasetRequest } = useRequest<DownloadResponseType>();
   const { request: updateDatasetNameRequest } = useRequest<UpdateDatasetNameResponseType>();
   const { request: updateDatasetDescriptionRequest } = useRequest<UpdateDatasetDescriptionResponseType>(); 
   const { request: deleteDatasetRequest } = useRequest<DeleteExperimentResponseType>();
@@ -59,7 +61,7 @@ const Organization = () => {
   }, [getDatasets]);
 
   const postNewDataset = useCallback(
-    (name: string, file: File | null, description: string, metadata: any) => {
+    async (name: string, file: File | null, description: string, metadata: any) => {
       const formData = new FormData();
       formData.append('dataset_name', name);
       if (file) {
@@ -67,28 +69,40 @@ const Organization = () => {
       }
       formData.append('description', description);
       formData.append('metadata', JSON.stringify(metadata));
-
-      createDatasetRequest({
-        url: `/exp/projects/${projID}/datasets/create`,
-        method: 'POST',
-        data: formData,
-      })
-        .then(() => {
+      try {
+        const response = await createDatasetRequest({
+          url: `/exp/projects/${projID}/datasets/create`,
+          method: 'POST',
+          data: formData,
+        });
+        if (response.data && response.data.id_dataset) {
           getDatasets();
           setNewDatasetName('');
           setNewFile(null);
           setNewDescription('');
           setMetadata([{ name: '', value: '', description: '' }]);
-        })
-        .catch((error) => {
-          if (error.message) {
-            message(error.message);
-          }
-        });
+        } else {
+          throw new Error('Unexpected response format');
+        }
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          // Handle AxiosError
+          console.error('Axios error:', error.response?.data); // Use error.response?.data to access the response data
+          message(`Error: ${error.response?.data.error || 'Server error'}`);
+        } else if (error instanceof Error) {
+          // Handle general Error
+          console.error('General error:', error.message);
+          message(`Error: ${error.message}`);
+        } else {
+          // Handle unexpected error types
+          console.error('Unexpected error:', error);
+          message('An unexpected error occurred');
+        }
+      }
     },
     [projID, createDatasetRequest, getDatasets, metadata]
   );
-
+  
   const handleNewDataset = () => {
     const datasetName = `dataset-${timeNow()}`;
     if (!newDatasetName.trim()) {
@@ -199,76 +213,70 @@ const Organization = () => {
       });
   };
 
-  // Define the type of the mimeTypesToExtensions dictionary
-  interface MimeTypesToExtensions {
-    [key: string]: string;
-  }
+  // // Define the type of the mimeTypesToExtensions dictionary
+  // interface MimeTypesToExtensions {
+  //   [key: string]: string;
+  // }
 
-  // Initialize the dictionary with specific MIME types and extensions
-  const mimeTypesToExtensions: MimeTypesToExtensions = {
-    'application/pdf': 'pdf',
-    'application/msword': 'doc',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
-    'application/vnd.ms-excel': 'xls',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
-    'application/vnd.ms-powerpoint': 'ppt',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
-    'text/plain': 'txt',
-    'text/html': 'html',
-    'application/json': 'json',
-    'image/jpeg': 'jpg',
-    'image/png': 'png',
-    'image/gif': 'gif',
-    'application/zip': 'zip',
-    'application/x-tar': 'tar',
-    'application/x-rar-compressed': 'rar',
-    // Add more MIME types and their extensions as needed
-  };
+  // // Initialize the dictionary with specific MIME types and extensions
+  // const mimeTypesToExtensions: MimeTypesToExtensions = {
+  //   'application/pdf': 'pdf',
+  //   'application/msword': 'doc',
+  //   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+  //   'application/vnd.ms-excel': 'xls',
+  //   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+  //   'application/vnd.ms-powerpoint': 'ppt',
+  //   'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
+  //   'text/plain': 'txt',
+  //   'text/html': 'html',
+  //   'application/json': 'json',
+  //   'image/jpeg': 'jpg',
+  //   'image/png': 'png',
+  //   'image/gif': 'gif',
+  //   'application/zip': 'zip',
+  //   'application/x-tar': 'tar',
+  //   'application/x-rar-compressed': 'rar',
+  //   // Add more MIME types and their extensions as needed
+  // };
 
-  const handleDownloadDataset = (index: number) => {
-    const datasetId = datasets[index].id_dataset;
-    const datasetFileType = datasets[index].file_type || 'application/octet-stream';
-  
-    axios({
-      url: `/exp/projects/${projID}/datasets/${datasetId}/download`,
-      method: 'GET',
-      responseType: 'blob', // Important for downloading files
-    })
-      .then((response) => {
+  const handleDownloadDataset = useCallback(
+    async (index: number) => {
+      const datasetId = datasets[index].id_dataset;
+      try {
+        // Perform the download request using the useRequest hook
+        const response = await getDatasetRequest({
+          url: `/exp/projects/${projID}/datasets/${datasetId}/download`,
+          method: 'GET',
+          responseType: 'blob', // Important for downloading files
+        });
         console.log('Response:', response);
-        const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+        const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
-        link.href = url;
-  
-        // Extract filename from content-disposition header or create a default filename
-        const contentDisposition = response.headers['content-disposition'];
-        let extension = mimeTypesToExtensions[datasetFileType] || 'bin'; // Get the correct extension
-        let filename = `${datasetId}.${extension}`; // Default filename with file extension
-  
-        if (contentDisposition) {
-          const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
-          if (filenameMatch && filenameMatch[1]) {
-            filename = filenameMatch[1].replace(/"/g, '');
-          }
-        }
-  
+        link.href = url;e
+        let filename = datasetId; // Default filename
         link.setAttribute('download', filename);
         document.body.appendChild(link);
         link.click();
-  
+        // Clean up after download
         document.body.removeChild(link);
-        window.URL.revokeObjectURL(url); // Clean up after download
-  
+        window.URL.revokeObjectURL(url);
         console.log({ type: 'success', message: 'File downloaded successfully.' });
-      })
-      .catch((error) => {
-        console.error('Download error:', error); // Log the error
-        console.log({ type: 'danger', message: error.response?.data?.message || error.message });
-      });
-  };
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          // Handle general Error
+          console.error('General error:', error.message);
+          message(`Error: ${error.message}`);
+        } else {
+          // Handle unexpected error types
+          console.error('Unexpected error:', error);
+          message('An unexpected error occurred');
+        }
+      }
+    },
+    [datasets, projID, getDatasetRequest]
+  );
+  
  
- 
-
   const handleOpenPopover = (index: number) => {
     setDeleteIndex(index);
     setShowPopover(true);

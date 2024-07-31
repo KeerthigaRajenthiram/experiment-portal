@@ -150,9 +150,10 @@ export type ConvertorResponseType = {
 };
 
 export type DownloadResponseType = {
-  data:Blob ;
+  data: Blob; 
   headers: {
-    'content-disposition': string;
-    'content-type': string;
+    'Content-Disposition'?: string;
+    'Content-Type': string;
   };
 };
+
