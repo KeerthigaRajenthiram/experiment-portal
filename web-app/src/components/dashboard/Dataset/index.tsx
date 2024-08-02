@@ -9,6 +9,7 @@ import { defaultDataset } from '../../../types/dataset';
 import {
   DatasetsResponseType,
   CreateDatasetResponseType,
+  CreateFolderResponseType,
   UpdateDatasetNameResponseType,
   UpdateDatasetDescriptionResponseType, 
   DeleteExperimentResponseType,
@@ -27,12 +28,17 @@ const Organization = () => {
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const [showAddPopover, setShowAddPopover] = useState(false);
   const [metadata, setMetadata] = useState([{ name: '', value: '', description: '' }]);
+  const [showFolderPopover, setShowFolderPopover] = useState(false);
+  const [folderFiles, setFolderFiles] = useState<File[]>([]);
+  const [folderMetadata, setFolderMetadata] = useState<{ [filename: string]: Array<{ name: string; value: string; description: string }> }>({});
+  const [pathFields, setPathFields] = useState([{ value: '' }]);
 
   const isDatasetEmpty = datasets.length === 0;
   const projID = useLocation().pathname.split('/')[3];
 
   const { request: datasetsRequest } = useRequest<DatasetsResponseType>();
   const { request: createDatasetRequest } = useRequest<CreateDatasetResponseType>();
+  const { request: createFolderRequest } = useRequest<CreateFolderResponseType>();
   const { request: getDatasetRequest } = useRequest<DownloadResponseType>();
   const { request: updateDatasetNameRequest } = useRequest<UpdateDatasetNameResponseType>();
   const { request: updateDatasetDescriptionRequest } = useRequest<UpdateDatasetDescriptionResponseType>(); 
@@ -86,15 +92,12 @@ const Organization = () => {
         }
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
-          // Handle AxiosError
-          console.error('Axios error:', error.response?.data); // Use error.response?.data to access the response data
+          console.error('Axios error:', error.response?.data); 
           message(`Error: ${error.response?.data.error || 'Server error'}`);
         } else if (error instanceof Error) {
-          // Handle general Error
           console.error('General error:', error.message);
           message(`Error: ${error.message}`);
         } else {
-          // Handle unexpected error types
           console.error('Unexpected error:', error);
           message('An unexpected error occurred');
         }
@@ -213,61 +216,31 @@ const Organization = () => {
       });
   };
 
-  // // Define the type of the mimeTypesToExtensions dictionary
-  // interface MimeTypesToExtensions {
-  //   [key: string]: string;
-  // }
-
-  // // Initialize the dictionary with specific MIME types and extensions
-  // const mimeTypesToExtensions: MimeTypesToExtensions = {
-  //   'application/pdf': 'pdf',
-  //   'application/msword': 'doc',
-  //   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
-  //   'application/vnd.ms-excel': 'xls',
-  //   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
-  //   'application/vnd.ms-powerpoint': 'ppt',
-  //   'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
-  //   'text/plain': 'txt',
-  //   'text/html': 'html',
-  //   'application/json': 'json',
-  //   'image/jpeg': 'jpg',
-  //   'image/png': 'png',
-  //   'image/gif': 'gif',
-  //   'application/zip': 'zip',
-  //   'application/x-tar': 'tar',
-  //   'application/x-rar-compressed': 'rar',
-  //   // Add more MIME types and their extensions as needed
-  // };
-
   const handleDownloadDataset = useCallback(
     async (index: number) => {
       const datasetId = datasets[index].id_dataset;
       try {
-        // Perform the download request using the useRequest hook
         const response = await getDatasetRequest({
           url: `/exp/projects/${projID}/datasets/${datasetId}/download`,
           method: 'GET',
-          responseType: 'blob', // Important for downloading files
+          responseType: 'blob', 
         });
         console.log('Response:', response);
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
-        link.href = url;e
-        let filename = datasetId; // Default filename
+        link.href = url;
+        let filename = datasetId; 
         link.setAttribute('download', filename);
         document.body.appendChild(link);
         link.click();
-        // Clean up after download
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
         console.log({ type: 'success', message: 'File downloaded successfully.' });
       } catch (error: unknown) {
         if (error instanceof Error) {
-          // Handle general Error
           console.error('General error:', error.message);
           message(`Error: ${error.message}`);
         } else {
-          // Handle unexpected error types
           console.error('Unexpected error:', error);
           message('An unexpected error occurred');
         }
@@ -276,7 +249,6 @@ const Organization = () => {
     [datasets, projID, getDatasetRequest]
   );
   
- 
   const handleOpenPopover = (index: number) => {
     setDeleteIndex(index);
     setShowPopover(true);
@@ -314,11 +286,105 @@ const Organization = () => {
     setShowAddPopover(false);
   };
 
+  const handleFolderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const fileArray = Array.from(files);
+      setFolderFiles(fileArray);
+    }
+  };
+  
+  const handleFolderMetadataChange = (filename: string, index: number, field: string, value: string) => {
+    setFolderMetadata(prev => ({
+      ...prev,
+      [filename]: prev[filename].map((meta, i) => 
+        i === index ? { ...meta, [field]: value } : meta
+      )
+    }));
+  };
+  
+  const addFolderMetadataField = (filename: string) => {
+    setFolderMetadata(prev => ({
+      ...prev,
+      [filename]: [
+        ...(prev[filename] || []),
+        { name: '', value: '', description: '' }
+      ]
+    }));
+  };
+  
+  const removeFolderMetadataField = (filename: string, index: number) => {
+    setFolderMetadata(prev => ({
+      ...prev,
+      [filename]: prev[filename].filter((_, i) => i !== index)
+    }));
+  };
+  
+  const handleUploadFolder = async () => {
+    const pathString = pathFields.map(field => field.value).join('/');
+    console.log('Path String:', pathString);
+    const formData = new FormData();
+    formData.append('path', pathString);
+    folderFiles.forEach((file, index) => {
+      formData.append(`files[${index}]`, file); 
+      formData.append(`file_name_${index}`, file.name); 
+      formData.append(`file_description_${index}`, file.name); 
+      console.log('Filename:', file.name);
+    });
+    folderFiles.forEach((file, index) => {
+      const metadata = folderMetadata[file.name] || [];
+      const metadataJSON = JSON.stringify(metadata);
+      formData.append(`metadata_${index}`, metadataJSON); 
+    });
+    try {
+      const response = await createFolderRequest({
+        url: `/exp/projects/${projID}/folder/create`,
+        method: 'POST',
+        data: formData,
+      });
+      if (response.data && response.data.dataset_ids) {
+        getDatasets();
+        setShowFolderPopover(false);
+      } else {
+        throw new Error('Unexpected response format');
+      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error('Axios error:', error.response?.data);
+        message(`Error: ${error.response?.data.error || 'Server error'}`);
+      } else if (error instanceof Error) {
+        console.error('General error:', error.message);
+        message(`Error: ${error.message}`);
+      } else {
+        console.error('Unexpected error:', error);
+        message('An unexpected error occurred');
+      }
+    }
+  };
+  
+  const addPathField = () => {
+    setPathFields([...pathFields, { value: '' }]);
+  };
+
+  const removePathField = (index: number) => {
+    setPathFields(pathFields.filter((_, i) => i !== index));
+  };
+
+  const handlePathFieldChange = (index: number, value: string) => {
+    const newPathFields = [...pathFields];
+    newPathFields[index].value = value;
+    setPathFields(newPathFields);
+  };
+
+  
   return (
     <div className="specification">
       <div className="specification__functions" style={{ margin: 10 }}>
         <button className="specification__functions__new" onClick={openAddDatasetPopover}>
           Add Dataset
+        </button>
+        <button className="specification__functions__new" onClick={() => setShowFolderPopover(true)}>
+          Add Folder
         </button>
       </div>
       <div className="specification__contents">
@@ -391,6 +457,13 @@ const Organization = () => {
                   {timestampToDate(dataset.update_at)}
                 </div>
                 <div className="specification__contents__list__item__operations">
+                  <span
+                    title="edit metadata"
+                    className="iconfont editable"
+                    onClick={() => handleOpenPopover(index)}
+                  >
+                    &#x270E;
+                  </span>
                   <span
                     title="download dataset"
                     className="iconfont editable"
@@ -483,6 +556,110 @@ const Organization = () => {
             </button>
             <button className="popover__add-dataset__buttons__confirm" onClick={handleNewDataset}>
               Confirm
+            </button>
+          </div>
+        </div>
+      </Popover>
+      <Popover show={showFolderPopover} blankClickCallback={() => setShowFolderPopover(false)}>
+        <div className="popover__upload-folder">
+          <div className="popover__upload-folder__text">Set Folder Path</div>
+          <div className="popover__upload-folder__path-fields">
+            {pathFields.map((field, index) => (
+              <div key={index} className="popover__upload-folder__path-fields__item">
+                <input
+                  className="popover__upload-folder__path__input"
+                  type="text"
+                  placeholder={index === 0 ? 'Folder' : `Sub folder ${index}`}
+                  value={field.value}
+                  onChange={(e) => handlePathFieldChange(index, e.target.value)}
+                  required={index === 0} // Make the first field required
+                />
+                <button
+                  className="popover__upload-folder__path__input__remove-button"
+                  onClick={() => removePathField(index)}
+                  disabled={index === 0} // Disable the button for the first field
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button className="popover__upload-folder__file_metadata__add-button" onClick={addPathField}>Add Path Part</button>
+          </div>
+          {/* File Input Section */}
+          <div className="popover__upload-folder__text">Select Files</div>
+          <input
+            className="popover__upload-folder__input"
+            type="file"
+            placeholder="Select file"
+            onChange={handleFolderChange}
+            multiple
+          />
+          {/* Metadata Section */}
+          <div className="popover__upload-folder__text">Select Metadata</div>
+          {folderFiles.map((file) => (
+            <div key={file.name} className="popover__upload-folder__file_metadata">
+              <div className="popover__upload-folder__metadata">
+                <div className="popover__upload-folder__metadata__title">{file.name}</div>
+                <div className="popover__upload-folder__metadata__label">File Name</div>
+                <input
+                  className="popover__upload-folder__input"
+                  type="text"
+                  placeholder={file.name}
+                  value={file.name}
+                />
+                <div className="popover__upload-folder__metadata__label">File Description</div>
+                <input
+                  className="popover__upload-folder__input"
+                  type="text"
+                  placeholder={file.name}
+                  value={file.name}
+                />
+                <hr></hr>
+                {folderMetadata[file.name]?.map((meta, index) => (
+                  <div key={index} className="popover__upload-folder__metadata__item" data-index={index+1}>
+                    <input
+                      className="popover__upload-folder__metadata__input"
+                      placeholder="Name"
+                      value={meta.name}
+                      onChange={(e) => handleFolderMetadataChange(file.name, index, 'name', e.target.value)}
+                    />
+                    <input
+                      className="popover__upload-folder__metadata__input"
+                      type="text"
+                      placeholder="Value"
+                      value={meta.value}
+                      onChange={(e) => handleFolderMetadataChange(file.name, index, 'value', e.target.value)}
+                    />
+                    <input
+                      className="popover__upload-folder__metadata__input"
+                      type="text"
+                      placeholder="Description"
+                      value={meta.description}
+                      onChange={(e) => handleFolderMetadataChange(file.name, index, 'description', e.target.value)}
+                    />
+                    <button
+                      className="popover__upload-folder__metadata__remove-button"
+                      onClick={() => removeFolderMetadataField(file.name, index)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <button 
+                  className="popover__upload-folder__metadata__add-button"
+                  onClick={() => addFolderMetadataField(file.name)}>
+                  Add Metadata
+                </button>
+              </div>
+            </div>
+          ))}
+          {/* Action Buttons */}
+          <div className="popover__upload-folder__buttons">
+            <button className="popover__upload-folder__buttons__cancel" onClick={() => setShowFolderPopover(false)}>
+              Cancel
+            </button>
+            <button className="popover__upload-folder__buttons__confirm" onClick={handleUploadFolder}>
+              Upload
             </button>
           </div>
         </div>

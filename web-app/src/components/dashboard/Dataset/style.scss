@@ -15,6 +15,11 @@
   margin-bottom: 0.15rem;
   width: 3.4rem;
   height: 0.35rem;
+  display: flex; /* Added to make buttons align horizontally */
+  flex-direction: row; /* Ensure buttons are aligned in a row */
+  justify-content: flex-start; /* Optional: aligns buttons to the start */
+  margin-bottom: 0.15rem;
+  padding: 0; /* Reset padding if needed */
 
   button {
     width: 1.6rem;
@@ -228,7 +233,7 @@
 .popover__add-dataset {
   width: 4rem;
   height: auto;
-  max-height: 8rem; // Set a maximum height
+  max-height: 7rem; // Set a maximum height
   overflow-y: auto; // Add a vertical scrollbar if content exceeds max-height
   overflow-x: hidden; // Prevent horizontal scrolling
 
@@ -238,12 +243,20 @@
     align-items: center;
     width: 4rem;
     height: 0.5rem;
-    color: darken($primary-theme-color, 40%);
-    font-size: 1.2em;
-    margin-bottom: 0.3rem; 
+    color: $primary-theme-color;
+    font-size: 1.6em;
   }
 
   &__input {
+    width: 3rem;
+    height: 0.3rem;
+    margin-bottom: 0.1rem;
+    box-sizing: border-box;
+    text-align: center; 
+  }
+
+  &__input[type="file"]::file-selector-button {
+    background-color:None; 
     width: 3rem;
     height: 0.3rem;
     margin-bottom: 0.1rem;
@@ -307,6 +320,249 @@
     &:active {
       background-color: lighten($secondary-background-color, 30%);
     }
+  }
+
+  &__buttons {
+    height: 0.35rem;
+    font-size: 1.2em;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+
+    &__cancel, &__confirm {
+      width: 50%;
+      height: 100%;
+      cursor: pointer;
+      font-size: 1em; 
+    }
+
+    &__cancel {
+      background-color: $cancel-background-color;
+      color: $primary-button-text-color;
+
+      &:hover {
+        background-color: darken($cancel-background-color, 20%);
+      }
+
+      &:active {
+        background-color: lighten($cancel-background-color, 30%);
+      }
+    }
+
+    &__confirm {
+      background-color: $secondary-background-color;
+      color: $primary-button-text-color;
+
+      &:hover {
+        background-color: darken($secondary-background-color, 20%);
+      }
+
+      &:active {
+        background-color: lighten($secondary-background-color, 30%);
+      }
+    }
+  }
+}
+
+.popover__upload-folder {
+  width: 4rem;
+  height: auto;
+  max-height: 7rem; // Set a maximum height
+  overflow-y: auto; // Add a vertical scrollbar if content exceeds max-height
+  overflow-x: hidden; // Prevent horizontal scrolling
+
+  &__text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4rem;
+    height: 0.5rem;
+    color: $primary-theme-color;
+    font-size: 1.6em;
+    margin-bottom: 0.3rem; 
+  }
+
+  &__input {
+    width: 3rem;
+    height: 0.3rem;
+    margin-bottom: 0.1rem;
+    box-sizing: border-box;
+    text-align: center; 
+  }
+
+  &__input[type="file"]::file-selector-button {
+    background-color: None; 
+    width: 3rem;
+    height: 0.3rem;
+    margin-bottom: 0.1rem;
+    box-sizing: border-box;
+    text-align: center; 
+  }
+
+  &__path__input {
+    width: 2.4rem;
+    height: 0.3rem;
+    margin-bottom: 0.1rem;
+    box-sizing: border-box;
+    text-align: center; 
+  
+  
+    &__remove-button {
+      margin: 0rem 0rem 0rem 0.1rem; /* top right bottom left */
+      color: $primary-button-text-color;
+      background-color: $alert-background-color;
+      border: none;
+      font-size: 1em;
+      cursor: pointer;
+
+      &:disabled {
+        cursor: not-allowed;
+        background-color: lighten($alert-background-color, 20%); // Optional: lighter background for disabled state
+        color: darken($primary-button-text-color, 20%); // Optional: darker text for disabled state
+      }
+
+      &:hover {
+        &:not(:disabled) {
+          background-color: darken($alert-background-color, 20%);
+        }
+      }
+
+      &:active {
+        &:not(:disabled) {
+          background-color: lighten($alert-background-color, 30%);
+          color: $primary-button-text-color;
+        }
+      }
+    }
+  }
+  
+  &__file_metadata {
+    padding: 0.2rem 0.2rem; // Padding inside the box
+    margin-bottom: 0.2rem; // Space between boxes
+    margin-left: 0.1rem;
+    margin-right: 0.1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+
+    &__text {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 4rem;
+      height: 0.5rem;
+      color: $primary-theme-color;
+      font-size: 2em;
+      margin-bottom: 0.3rem; 
+    }
+
+    &__label {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 4rem;
+      height: 0.5rem;
+      color: darken($primary-theme-color, 40%);
+      font-size: 1.2em;
+      margin-bottom: 0.3rem; 
+    }
+
+    &__add-button {
+      display: block;
+      margin: 0 0.35rem 0rem auto; 
+      height: 0.3rem;
+      font-size: 1em; 
+      cursor: pointer;
+      background-color: $secondary-background-color; 
+      color: $primary-button-text-color; 
+
+      &:hover {
+        background-color: darken($secondary-background-color, 20%);
+      }
+
+      &:active {
+        background-color: lighten($secondary-background-color, 30%);
+      }
+    }
+    
+    
+  }
+
+  &__metadata {
+    position: relative;
+    border: 2px solid #ccc; 
+    padding: 0.1rem 0.1rem; // Padding inside the box
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    
+    &__item {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 0.2rem;
+      position: relative;
+
+      // Horizontal line before each metadata set
+      &::before {
+        content: 'Metadata Set - ' attr(data-index);
+        display: block;
+        width: 100%;
+        border-bottom: 1px solid $primary-theme-color;
+        color: $primary-theme-color;
+        text-align: center;
+        font-size: 1.2em;
+        margin-bottom: 0.1rem;
+        background-color: #fff; // Optional: Background color to ensure text readability
+      }
+    }
+
+    &__input {
+      height: 0.3rem;
+      margin-bottom: 0.1rem;
+      box-sizing: border-box;
+      text-align: center; 
+    }
+
+    &__add-button {
+      display: block;
+      margin: 0 0rem 0rem auto; 
+      height: 0.3rem;
+      font-size: 1em; 
+      cursor: pointer;
+      background-color: $secondary-background-color; 
+      color: $primary-button-text-color; 
+
+      &:hover {
+        background-color: darken($secondary-background-color, 20%);
+      }
+
+      &:active {
+        background-color: lighten($secondary-background-color, 30%);
+      }
+    }
+    &__remove-button {
+      position: relative; 
+      bottom: 0.05rem; 
+      right: 0.05rem; 
+      color: $primary-button-text-color;
+      background-color: $alert-background-color;
+      margin-left: 2.4rem;
+      border: none;
+      font-size: 1em;
+      cursor: pointer;
+
+      &:hover {
+        background-color: darken($alert-background-color, 20%);
+      }
+
+      &:active {
+        background-color: lighten($alert-background-color, 30%);
+        color: $primary-button-text-color;
+      }
+    }
+    
   }
 
   &__buttons {

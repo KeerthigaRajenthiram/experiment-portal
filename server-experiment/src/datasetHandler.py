@@ -41,14 +41,18 @@ class DatasetHandler(object):
         documents = self.collection_dataset.find(query)
         return json.loads(json.dumps(documents[0], default=str))
 
-    def create_dataset(self, username, proj_id, dataset_name, file, description, metadata):
+    def create_dataset(self, username, proj_id, dataset_name, file, description, metadata, path=None):
         try:
             dataset_content = file.read()
             filename = secure_filename(file.filename)
             file_extension = filename.split('.')[-1]
             create_time = calendar.timegm(time.gmtime())
             dataset_id = f"{username}_{dataset_name.replace(' ', '')}_{create_time}.{file_extension}"
-            key_expr = self.zenoh_key_expr.format(proj_id=proj_id, dataset_id=dataset_id)
+            if path:
+                key_expr = f"projects/{proj_id}/datasets/{path}/{dataset_id}"
+            else:
+                key_expr = f"projects/{proj_id}/datasets/{dataset_id}"
+
             zenoh_node = "tcp/zenoh1:7447"
             mime = magic.Magic(mime=True)
             file_type = mime.from_buffer(dataset_content)
@@ -59,6 +63,7 @@ class DatasetHandler(object):
             pub = self.zenoh_session.declare_publisher(key_expr)
             zenoh_encoding = get_zenoh_encoding_from_mime(file_type)
             pub.put(dataset_content, encoding=zenoh_encoding)
+            
             query = {
                 "id_dataset": dataset_id,
                 "project_id": proj_id,
@@ -78,7 +83,8 @@ class DatasetHandler(object):
             return dataset_id
         except Exception as e:
             print(f"Failed to create dataset: {e}")
-            return jsonify({"error": str(e)}), 500
+            return None
+
 
     def delete_dataset(self, dataset_id, proj_id):
         query = {"id_dataset": dataset_id}
@@ -153,7 +159,7 @@ class DatasetHandler(object):
         try:
             replies = self.zenoh_session.get(key_expr, zenoh.ListCollector())
             if not replies:
-            in_memory_zip = io.BytesIO()
+                in_memory_zip = io.BytesIO()
             with zipfile.ZipFile(in_memory_zip, mode="w") as zf:
                 for reply in replies():
                     file_content = None

@@ -323,15 +323,14 @@ def get_datasets(proj_id):
 
 
 @app.route("/exp/projects/<proj_id>/datasets/create", methods=["OPTIONS", "POST"])
+@cross_origin()
 def create_dataset(proj_id):
-    # Ensure the dataset_name parameter is present
     if "dataset_name" not in request.form:
         return jsonify({"error": "Missing dataset_name parameter"}), 400
     if "description" not in request.form:
         return jsonify({"error": "Missing dataset_name parameter"}), 400
     description=request.form.get('description')
     dataset_name = request.form["dataset_name"]
-    # Ensure the file is part of the request
     if "file" not in request.files:
         return jsonify({"error": "No file part in the request"}), 400
     file = request.files["file"]
@@ -343,8 +342,6 @@ def create_dataset(proj_id):
             return jsonify({"error": "Invalid JSON format for metadata"}), 400
     else:
         metadata = []
-
-    # Call the datasetHandler method
     dataset_id = datasetHandler.create_dataset(
         g.username, proj_id, dataset_name, file, description, metadata
     )
@@ -352,6 +349,32 @@ def create_dataset(proj_id):
         return jsonify({"message": "Dataset created", "data": {"id_dataset": dataset_id}}), 201
     else:
         return jsonify({"error": "Failed to create dataset"}), 500
+
+@app.route("/exp/projects/<proj_id>/folder/create", methods=["OPTIONS", "POST"])
+def create_folder(proj_id):
+    path = request.form.get('path')
+    if not path:
+        return jsonify({"error": "Missing path parameter"}), 400
+    dataset_ids = []
+    files = request.files
+    index = 0
+    while f"files[{index}]" in files:
+        file = files.get(f"files[{index}]")
+        if file:
+            dataset_name = request.form.get(f'file_name_{index}', '')
+            description = request.form.get(f'file_description_{index}', '')
+            metadata_str = request.form.get(f'metadata_{index}', '[]')
+            try:
+                metadata = json.loads(metadata_str)
+            except json.JSONDecodeError:
+                return jsonify({"error": "Invalid JSON format for metadata"}), 400
+            dataset_id = datasetHandler.create_dataset(g.username, proj_id, dataset_name, file, description, metadata, path)
+            if dataset_id:
+                dataset_ids.append(dataset_id)
+            else:
+                return jsonify({"error": "Failed to create dataset"}), 500
+        index += 1
+    return jsonify({"message": "Datasets created", "data": {"dataset_ids": dataset_ids}}), 201
 
 
 @app.route(
