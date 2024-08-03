@@ -1,4 +1,4 @@
-from flask import Flask, request, g, send_file, jsonify, make_response
+from flask import Flask, request, g, send_file, jsonify
 from flask_cors import CORS, cross_origin
 from userAuthHandler import userAuthHandler
 from projectHandler import projectHandler

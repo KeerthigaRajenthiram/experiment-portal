@@ -30,7 +30,14 @@ const Organization = () => {
   const [metadata, setMetadata] = useState([{ name: '', value: '', description: '' }]);
   const [showFolderPopover, setShowFolderPopover] = useState(false);
   const [folderFiles, setFolderFiles] = useState<File[]>([]);
-  const [folderMetadata, setFolderMetadata] = useState<{ [filename: string]: Array<{ name: string; value: string; description: string }> }>({});
+  const [folderMetadata, setFolderMetadata] = useState<{
+    [filename: string]: {
+      file_name: string;
+      file_description: string;
+      metadata: Array<{ name: string; value: string; description: string }>
+    }
+  }>({});
+  
   const [pathFields, setPathFields] = useState([{ value: '' }]);
 
   const isDatasetEmpty = datasets.length === 0;
@@ -286,62 +293,107 @@ const Organization = () => {
     setShowAddPopover(false);
   };
 
+
   const handleFolderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
       const fileArray = Array.from(files);
       setFolderFiles(fileArray);
+      const newMetadata = fileArray.reduce((acc, file) => {
+        acc[file.name] = {
+          file_name: file.name.replace(/\.[^/.]+$/, ""),
+          file_description: '',
+          metadata: []
+        };
+        return acc;
+      }, {} as typeof folderMetadata);
+      setFolderMetadata(newMetadata);
     }
   };
   
-  const handleFolderMetadataChange = (filename: string, index: number, field: string, value: string) => {
+  const handleFolderMetadataChange = (
+    filename: string,
+    index: number | null,
+    field: 'name' | 'value' | 'description' | 'fileName' | 'fileDescription',
+    value: string
+  ) => {
     setFolderMetadata(prev => ({
       ...prev,
-      [filename]: prev[filename].map((meta, i) => 
-        i === index ? { ...meta, [field]: value } : meta
-      )
+      [filename]: {
+        ...prev[filename],
+        ...(field === 'fileName' ? { file_name: value } : {}),
+        ...(field === 'fileDescription' ? { file_description: value } : {}),
+        metadata: field !== 'fileName' && field !== 'fileDescription'
+          ? prev[filename]?.metadata.map((meta, i) =>
+              i === index ? { ...meta, [field]: value } : meta
+            ) || []
+          : prev[filename]?.metadata || []
+      }
     }));
   };
+  
+  const handleFileNameChange = (filename: string, value: string) => {
+    handleFolderMetadataChange(filename, null, 'fileName', value);
+  };
+  
+  const handleFileDescriptionChange = (filename: string, value: string) => {
+    handleFolderMetadataChange(filename, null, 'fileDescription', value);
+  };
+  
+  
   
   const addFolderMetadataField = (filename: string) => {
     setFolderMetadata(prev => ({
       ...prev,
-      [filename]: [
-        ...(prev[filename] || []),
-        { name: '', value: '', description: '' }
-      ]
+      [filename]: {
+        ...prev[filename],
+        metadata: [
+          ...(prev[filename]?.metadata || []),
+          { name: '', value: '', description: '' }
+        ]
+      }
     }));
   };
+  
   
   const removeFolderMetadataField = (filename: string, index: number) => {
     setFolderMetadata(prev => ({
       ...prev,
-      [filename]: prev[filename].filter((_, i) => i !== index)
+      [filename]: {
+        ...prev[filename],
+        metadata: (prev[filename]?.metadata || []).filter((_, i) => i !== index)
+      }
     }));
   };
   
   const handleUploadFolder = async () => {
     const pathString = pathFields.map(field => field.value).join('/');
     console.log('Path String:', pathString);
+  
     const formData = new FormData();
     formData.append('path', pathString);
+  
     folderFiles.forEach((file, index) => {
-      formData.append(`files[${index}]`, file); 
-      formData.append(`file_name_${index}`, file.name); 
-      formData.append(`file_description_${index}`, file.name); 
+      formData.append(`files[${index}]`, file);
+      formData.append(`file_name_${index}`, folderMetadata[file.name]?.file_name || '');
+      formData.append(`file_description_${index}`, folderMetadata[file.name]?.file_description || '');
       console.log('Filename:', file.name);
+      console.log('folderMetadata:', folderMetadata[file.name]);
     });
+  
     folderFiles.forEach((file, index) => {
-      const metadata = folderMetadata[file.name] || [];
+      const metadata = folderMetadata[file.name]?.metadata || [];
       const metadataJSON = JSON.stringify(metadata);
-      formData.append(`metadata_${index}`, metadataJSON); 
+      formData.append(`metadata_${index}`, metadataJSON);
     });
+  
     try {
       const response = await createFolderRequest({
         url: `/exp/projects/${projID}/folder/create`,
         method: 'POST',
         data: formData,
       });
+  
       if (response.data && response.data.dataset_ids) {
         getDatasets();
         setShowFolderPopover(false);
@@ -376,6 +428,13 @@ const Organization = () => {
     setPathFields(newPathFields);
   };
 
+  const resetPopoverData = () => {
+    setFolderFiles([]);
+    setFolderMetadata({});
+    setPathFields([{ value: '' }]);
+  };
+  
+
   
   return (
     <div className="specification">
@@ -383,7 +442,13 @@ const Organization = () => {
         <button className="specification__functions__new" onClick={openAddDatasetPopover}>
           Add Dataset
         </button>
-        <button className="specification__functions__new" onClick={() => setShowFolderPopover(true)}>
+        <button 
+          className="specification__functions__new" 
+          onClick={() => {
+            resetPopoverData();
+            setShowFolderPopover(true);
+            }}
+        >
           Add Folder
         </button>
       </div>
@@ -502,6 +567,7 @@ const Organization = () => {
       <Popover show={showAddPopover} blankClickCallback={closeMask}>
         <div className="popover__add-dataset">
           <div className="popover__add-dataset__text">Add New Dataset</div>
+          <div className="popover__add-dataset__label">File Name</div>
           <input
             className="popover__add-dataset__input"
             type="text"
@@ -509,6 +575,7 @@ const Organization = () => {
             value={newDatasetName}
             onChange={(e) => setNewDatasetName(e.target.value)}
           />
+          <div className="popover__add-dataset__label">File Description</div>
           <input
             className="popover__add-dataset__input"
             type="text"
@@ -516,6 +583,7 @@ const Organization = () => {
             value={newDescription}
             onChange={(e) => setNewDescription(e.target.value)}
           />
+          <div className="popover__add-dataset__label">Select File</div>
           <input
             className="popover__add-dataset__input"
             type="file"
@@ -524,24 +592,27 @@ const Organization = () => {
           />
           <div className="popover__add-dataset__text">Add Metadata</div>
           {metadata.map((meta, index) => (
-            <div key={index} className="popover__add-dataset__metadata">
+            <div key={index} className="popover__add-dataset__metadata" data-index={index+1}>
               <button className="popover__add-dataset__metadata__remove-button" onClick={() => removeMetadataField(index)}>Remove</button>
+              <div className="popover__add-dataset__metadata__label">Metadata Name</div>
               <input
-                className="popover__add-dataset__metadata_input"
+                className="popover__add-dataset__metadata__input"
                 type="text"
                 placeholder="Name"
                 value={meta.name}
                 onChange={(e) => handleMetadataChange(index, 'name', e.target.value)}
               />
+              <div className="popover__add-dataset__metadata__label">Metadata Value</div>
               <input
-                className="popover__add-dataset__metadata_input"
+                className="popover__add-dataset__metadata__input"
                 type="text"
                 placeholder="Value"
                 value={meta.value}
                 onChange={(e) => handleMetadataChange(index, 'value', e.target.value)}
               />
+              <div className="popover__add-dataset__metadata__label">Metadata Description</div>
               <input
-                className="popover__add-dataset__metadata_input"
+                className="popover__add-dataset__metadata__input"
                 type="text"
                 placeholder="Description"
                 value={meta.description}
@@ -585,6 +656,7 @@ const Organization = () => {
             ))}
             <button className="popover__upload-folder__file_metadata__add-button" onClick={addPathField}>Add Path Part</button>
           </div>
+
           {/* File Input Section */}
           <div className="popover__upload-folder__text">Select Files</div>
           <input
@@ -594,65 +666,84 @@ const Organization = () => {
             onChange={handleFolderChange}
             multiple
           />
+
           {/* Metadata Section */}
           <div className="popover__upload-folder__text">Select Metadata</div>
-          {folderFiles.map((file) => (
-            <div key={file.name} className="popover__upload-folder__file_metadata">
-              <div className="popover__upload-folder__metadata">
-                <div className="popover__upload-folder__metadata__title">{file.name}</div>
-                <div className="popover__upload-folder__metadata__label">File Name</div>
-                <input
-                  className="popover__upload-folder__input"
-                  type="text"
-                  placeholder={file.name}
-                  value={file.name}
-                />
-                <div className="popover__upload-folder__metadata__label">File Description</div>
-                <input
-                  className="popover__upload-folder__input"
-                  type="text"
-                  placeholder={file.name}
-                  value={file.name}
-                />
-                <hr></hr>
-                {folderMetadata[file.name]?.map((meta, index) => (
-                  <div key={index} className="popover__upload-folder__metadata__item" data-index={index+1}>
-                    <input
-                      className="popover__upload-folder__metadata__input"
-                      placeholder="Name"
-                      value={meta.name}
-                      onChange={(e) => handleFolderMetadataChange(file.name, index, 'name', e.target.value)}
-                    />
-                    <input
-                      className="popover__upload-folder__metadata__input"
-                      type="text"
-                      placeholder="Value"
-                      value={meta.value}
-                      onChange={(e) => handleFolderMetadataChange(file.name, index, 'value', e.target.value)}
-                    />
-                    <input
-                      className="popover__upload-folder__metadata__input"
-                      type="text"
-                      placeholder="Description"
-                      value={meta.description}
-                      onChange={(e) => handleFolderMetadataChange(file.name, index, 'description', e.target.value)}
-                    />
-                    <button
-                      className="popover__upload-folder__metadata__remove-button"
-                      onClick={() => removeFolderMetadataField(file.name, index)}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-                <button 
-                  className="popover__upload-folder__metadata__add-button"
-                  onClick={() => addFolderMetadataField(file.name)}>
-                  Add Metadata
-                </button>
+          {folderFiles.map((file) => {
+            const fileData = folderMetadata[file.name] || {
+              file_name: file.name.replace(/\.[^/.]+$/, ""),
+              file_description: '',
+              metadata: []
+            };
+
+            return (
+              <div key={file.name} className="popover__upload-folder__file_metadata">
+                <div className="popover__upload-folder__metadata">
+                  <div className="popover__upload-folder__metadata__title">{file.name}</div>
+
+                  <div className="popover__upload-folder__metadata__label">File Name</div>
+                  <input
+                    className="popover__upload-folder__input"
+                    type="text"
+                    placeholder="File name without extension"
+                    value={fileData.file_name}
+                    onChange={(e) => handleFileNameChange(file.name, e.target.value)}
+                  />
+
+                  <div className="popover__upload-folder__metadata__label">File Description</div>
+                  <input
+                    className="popover__upload-folder__input"
+                    type="text"
+                    placeholder="Enter description"
+                    value={fileData.file_description}
+                    onChange={(e) => handleFileDescriptionChange(file.name, e.target.value)}
+                  />
+
+                  <hr />
+
+                  {fileData.metadata.map((meta, index) => (
+                    <div key={index} className="popover__upload-folder__metadata__item" data-index={index+1}>
+                      <div className="popover__upload-folder__metadata__label">Metadata Name</div>
+                      <input
+                        className="popover__upload-folder__metadata__input"
+                        placeholder="Name"
+                        value={meta.name}
+                        onChange={(e) => handleFolderMetadataChange(file.name, index, 'name', e.target.value)}
+                      />
+                      <div className="popover__upload-folder__metadata__label">Metadata Value</div>
+                      <input
+                        className="popover__upload-folder__metadata__input"
+                        type="text"
+                        placeholder="Value"
+                        value={meta.value}
+                        onChange={(e) => handleFolderMetadataChange(file.name, index, 'value', e.target.value)}
+                      />
+                      <div className="popover__upload-folder__metadata__label">Metadata Description</div>
+                      <input
+                        className="popover__upload-folder__metadata__input"
+                        type="text"
+                        placeholder="Description"
+                        value={meta.description}
+                        onChange={(e) => handleFolderMetadataChange(file.name, index, 'description', e.target.value)}
+                      />
+                      <button
+                        className="popover__upload-folder__metadata__remove-button"
+                        onClick={() => removeFolderMetadataField(file.name, index)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                  <button 
+                    className="popover__upload-folder__metadata__add-button"
+                    onClick={() => addFolderMetadataField(file.name)}>
+                    Add Metadata
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
+
           {/* Action Buttons */}
           <div className="popover__upload-folder__buttons">
             <button className="popover__upload-folder__buttons__cancel" onClick={() => setShowFolderPopover(false)}>
@@ -664,6 +755,7 @@ const Organization = () => {
           </div>
         </div>
       </Popover>
+
     </div>
   );
 };

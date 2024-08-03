@@ -88,8 +88,11 @@ class DatasetHandler(object):
 
     def delete_dataset(self, dataset_id, proj_id):
         query = {"id_dataset": dataset_id}
-        self.collection_dataset.delete_one(query)
-        key_expr = self.zenoh_key_expr.format(proj_id=proj_id, dataset_id=dataset_id)
+        dataset_to_delete = self.collection_dataset.find_one(query)
+        key_expr = dataset_to_delete.get("zenoh_key_expr")
+        if not dataset_to_delete:
+            return None
+        self.collection_dataset.delete_one(dataset_to_delete)
         try:
             self.zenoh_session.delete(key_expr)
         except Exception as e:
@@ -131,24 +134,32 @@ class DatasetHandler(object):
         return True
 
     def get_from_zenoh(self, proj_id, dataset_id):
-        key_expr = self.zenoh_key_expr.format(proj_id=proj_id, dataset_id=dataset_id)
+        key_expr_exact = self.zenoh_key_expr.format(proj_id=proj_id, dataset_id=dataset_id)
+        key_expr_pattern = f"projects/{proj_id}/datasets/*/{dataset_id}"
         dataset_to_get = self.collection_dataset.find_one({"id_dataset": dataset_id})
         if not dataset_to_get:
             return {"message": "Dataset not found in MongoDB"}
         mime_type = dataset_to_get.get("file_type", "application/octet-stream")
         try:
-            replies = self.zenoh_session.get(key_expr, zenoh.ListCollector())
+            replies = self.zenoh_session.get(key_expr_exact, zenoh.ListCollector())
             file_content = None
             for reply in replies():
                 if reply.ok:
                     file_content = reply.ok.payload
                     break
+            if file_content is None:
+                replies = self.zenoh_session.get(key_expr_pattern, zenoh.ListCollector())
+                for reply in replies():
+                    if reply.ok:
+                        file_content = reply.ok.payload
+                        break
             if file_content:
                 return dataset_id, io.BytesIO(file_content), mime_type
             else:
                 return None
         except Exception as e:
-            print(f"Failed to delete datasets from Zenoh: {e}")
+            print(f"Failed to get dataset from Zenoh: {e}")
+            return {"message": "Error retrieving dataset from Zenoh"}
 
         
     def get_many_from_zenoh(self, proj_id):
