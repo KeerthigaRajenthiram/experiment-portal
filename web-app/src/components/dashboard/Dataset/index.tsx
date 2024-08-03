@@ -5,7 +5,7 @@ import useRequest from '../../../hooks/useRequest';
 import { message } from '../../../utils/message';
 import { timeNow, timestampToDate } from '../../../utils/timeToDate';
 import './style.scss';
-import { defaultDataset } from '../../../types/dataset';
+import { defaultDataset, defaultMetadataItem } from '../../../types/dataset';
 import {
   DatasetsResponseType,
   CreateDatasetResponseType,
@@ -13,7 +13,8 @@ import {
   UpdateDatasetNameResponseType,
   UpdateDatasetDescriptionResponseType, 
   DeleteExperimentResponseType,
-  DownloadResponseType
+  DownloadResponseType,
+  UpdateDatasetMetadataResponseType
 } from '../../../types/requests';
 import axios from 'axios';
 
@@ -37,8 +38,10 @@ const Organization = () => {
       metadata: Array<{ name: string; value: string; description: string }>
     }
   }>({});
-  
   const [pathFields, setPathFields] = useState([{ value: '' }]);
+  const [showMetadataEditPopover, setShowMetadataEditPopover] = useState<boolean>(false);
+  const [editingMetadata, setEditingMetadata] = useState([defaultMetadataItem]);
+  const [metadataDatasetID, setMetadataDatasetID] = useState<string | null>(null); // To keep track of which dataset is being edited
 
   const isDatasetEmpty = datasets.length === 0;
   const projID = useLocation().pathname.split('/')[3];
@@ -48,6 +51,7 @@ const Organization = () => {
   const { request: createFolderRequest } = useRequest<CreateFolderResponseType>();
   const { request: getDatasetRequest } = useRequest<DownloadResponseType>();
   const { request: updateDatasetNameRequest } = useRequest<UpdateDatasetNameResponseType>();
+  const { request: UpdateDatasetMetadataRequest } = useRequest<UpdateDatasetMetadataResponseType>();
   const { request: updateDatasetDescriptionRequest } = useRequest<UpdateDatasetDescriptionResponseType>(); 
   const { request: deleteDatasetRequest } = useRequest<DeleteExperimentResponseType>();
  
@@ -434,8 +438,64 @@ const Organization = () => {
     setPathFields([{ value: '' }]);
   };
   
-
+  const addEditMetadataField = () => {
+    setEditingMetadata(prevMetadata => 
+      prevMetadata ? [...prevMetadata, { name: '', value: '', description: '' }] : [{ name: '', value: '', description: '' }]
+    );
+  };
   
+  const removeEditMetadataField = (index: number) => {
+    setEditingMetadata(prevMetadata => 
+      prevMetadata ? prevMetadata.filter((_, i) => i !== index) : []
+    );
+  };
+  
+  const handleEditMetadataChange = (index: number, field: 'name' | 'value' | 'description', value: string) => {
+    setEditingMetadata(prevMetadata => 
+      prevMetadata ? prevMetadata.map((meta, i) =>
+        i === index ? { ...meta, [field]: value } : meta
+      ) : []
+    );
+  };
+
+  const handleOpenMetadataEditPopover = (datasetIndex: number) => {
+    // Ensure the datasetIndex is within bounds
+    if (datasetIndex < 0 || datasetIndex >= datasets.length) {
+      console.error("Invalid dataset index");
+      return;
+    }
+    const dataset = datasets[datasetIndex];
+    setEditingMetadata(dataset.metadata);
+    setMetadataDatasetID(dataset.id_dataset);
+    setShowMetadataEditPopover(true);
+  };
+  
+  // Close metadata edit popover
+  const handleCloseMetadataEditPopover = () => {
+    setShowMetadataEditPopover(false);
+    setEditingMetadata([defaultMetadataItem]);
+    setMetadataDatasetID(null);
+  };
+  
+  // Update dataset metadata
+  const handleEditMetadata = async () => {
+    if (metadataDatasetID) {
+      try {
+        const response = await UpdateDatasetMetadataRequest({
+          url: `/exp/projects/${projID}/datasets/${metadataDatasetID}/update/metadata`,
+          method: 'PUT',
+          data: { dataset_metadata: editingMetadata }
+        });
+        console.log('Metadata updated successfully:', response);
+        // Optionally refresh datasets or update state here
+      } catch (error) {
+        console.error('Error updating metadata:', error);
+      }
+      handleCloseMetadataEditPopover();
+      getDatasets();
+    }
+  };
+
   return (
     <div className="specification">
       <div className="specification__functions" style={{ margin: 10 }}>
@@ -525,7 +585,7 @@ const Organization = () => {
                   <span
                     title="edit metadata"
                     className="iconfont editable"
-                    onClick={() => handleOpenPopover(index)}
+                    onClick={() => handleOpenMetadataEditPopover(index)}
                   >
                     &#x270E;
                   </span>
@@ -666,7 +726,6 @@ const Organization = () => {
             onChange={handleFolderChange}
             multiple
           />
-
           {/* Metadata Section */}
           <div className="popover__upload-folder__text">Select Metadata</div>
           {folderFiles.map((file) => {
@@ -675,7 +734,6 @@ const Organization = () => {
               file_description: '',
               metadata: []
             };
-
             return (
               <div key={file.name} className="popover__upload-folder__file_metadata">
                 <div className="popover__upload-folder__metadata">
@@ -698,9 +756,7 @@ const Organization = () => {
                     value={fileData.file_description}
                     onChange={(e) => handleFileDescriptionChange(file.name, e.target.value)}
                   />
-
                   <hr />
-
                   {fileData.metadata.map((meta, index) => (
                     <div key={index} className="popover__upload-folder__metadata__item" data-index={index+1}>
                       <div className="popover__upload-folder__metadata__label">Metadata Name</div>
@@ -743,7 +799,6 @@ const Organization = () => {
               </div>
             );
           })}
-
           {/* Action Buttons */}
           <div className="popover__upload-folder__buttons">
             <button className="popover__upload-folder__buttons__cancel" onClick={() => setShowFolderPopover(false)}>
@@ -751,6 +806,51 @@ const Organization = () => {
             </button>
             <button className="popover__upload-folder__buttons__confirm" onClick={handleUploadFolder}>
               Upload
+            </button>
+          </div>
+        </div>
+      </Popover>
+      <Popover show={showMetadataEditPopover} blankClickCallback={handleCloseMetadataEditPopover}>
+        <div className="popover__edit-metadata">
+          <div className="popover__edit-metadata__text">Edit Metadata</div>
+          {editingMetadata.map((meta, index) => (
+            <div key={index} className="popover__edit-metadata__metadata" data-index={index+1}>
+              <button
+                className="popover__edit-metadata__metadata__remove-button"
+                onClick={() => removeEditMetadataField(index)}
+              >
+                Remove
+              </button>
+              <div className="popover__edit-metadata__label">Metadata Name</div>
+              <input
+                type="text"
+                className="popover__edit-metadata__input"
+                value={meta.name}
+                onChange={(e) => handleEditMetadataChange(index, 'name', e.target.value)}
+              />
+              <div className="popover__edit-metadata__label">Metadata Value</div>
+              <input
+                className="popover__edit-metadata__input"
+                type="text"
+                value={meta.value}
+                onChange={(e) => handleEditMetadataChange(index, 'value', e.target.value)}
+              />
+              <div className="popover__edit-metadata__label">Metadata Description</div>
+              <input
+                className="popover__edit-metadata__input"
+                type="text"
+                value={meta.description}
+                onChange={(e) => handleEditMetadataChange(index, 'description', e.target.value)}
+              />
+            </div>
+          ))}
+          <button className="popover__edit-metadata__add-button" onClick={addEditMetadataField}>Add Metadata</button>
+          <div className="popover__edit-metadata__buttons">
+            <button className="popover__edit-metadata__buttons__cancel" onClick={handleCloseMetadataEditPopover}>
+              Cancel
+            </button>
+            <button className="popover__edit-metadata__buttons__confirm" onClick={handleEditMetadata}>
+              Save Changes
             </button>
           </div>
         </div>

@@ -36,3 +36,11 @@ export const defaultDataset = {
   zenoh_key_expr:'',
   metadata: [defaultMetadataItem]
 };
+
+export interface defaultDatasetMetadata { 
+  metadata: MetadataItem[]; 
+};
+
+export const defaultDatasetMetadata ={ 
+  metadata: [defaultMetadataItem]
+};

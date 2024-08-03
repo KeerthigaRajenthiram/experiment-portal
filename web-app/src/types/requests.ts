@@ -148,6 +148,11 @@ export type UpdateDatasetDescriptionResponseType= {
   message: string;
 };
 
+export type UpdateDatasetMetadataResponseType = {
+  message: string;
+};
+
+
 export type ConvertorResponseType = {
   message: string;
   data: {

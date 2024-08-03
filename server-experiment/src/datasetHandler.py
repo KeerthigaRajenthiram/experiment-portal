@@ -133,6 +133,14 @@ class DatasetHandler(object):
         projectHandler.update_project_update_at(proj_id)
         return True
 
+    def update_dataset_metadata(self, dataset_id, proj_id, dataset_metadata):
+        update_time = calendar.timegm(time.gmtime())
+        query = {"id_dataset": dataset_id}
+        new_values = {"$set": {"metadata": dataset_metadata, "update_at": update_time}}
+        self.collection_dataset.update_one(query, new_values)
+        projectHandler.update_project_update_at(proj_id)
+        return True
+    
     def get_from_zenoh(self, proj_id, dataset_id):
         key_expr_exact = self.zenoh_key_expr.format(proj_id=proj_id, dataset_id=dataset_id)
         key_expr_pattern = f"projects/{proj_id}/datasets/*/{dataset_id}"

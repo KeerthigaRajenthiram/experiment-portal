@@ -403,6 +403,16 @@ def update_dataset_description(proj_id, dataset_id):
     return {"message": "dataset description updated"}, 200
 
 @app.route(
+    "/exp/projects/<proj_id>/datasets/<dataset_id>/update/metadata",
+    methods=["OPTIONS", "PUT"],
+)
+@cross_origin()
+def update_dataset_metadata(proj_id, dataset_id):
+    dataset_metadata = request.json["dataset_metadata"]
+    datasetHandler.update_dataset_metadata(dataset_id, proj_id, dataset_metadata)
+    return {"message": "dataset name updated"}, 200
+
+@app.route(
     "/exp/projects/<proj_id>/datasets/<dataset_id>/delete",
     methods=["OPTIONS", "DELETE"],
 )
