@@ -231,7 +231,7 @@
 }
 
 
-.popover__add-dataset, .popover__edit-metadata {
+.popover__add-dataset, .popover__edit-metadata, .popover__download {
   width: 4rem;
   height: auto;
   max-height: 7rem; // Set a maximum height
@@ -264,6 +264,15 @@
     font-size: 1.2em;
     text-align: left; 
   }
+
+  &__options label {
+    display: block;          
+    margin-bottom: 0.1rem;   
+    text-align: left;        
+    padding-left: 0.5rem;    
+    color: $primary-theme-color;
+  }
+  
 
   &__input[type="file"]::file-selector-button {
     background-color:None; 

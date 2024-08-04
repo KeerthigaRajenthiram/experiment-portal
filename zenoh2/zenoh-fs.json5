@@ -21,7 +21,8 @@
           "strip_prefix": "projects",
           "volume": {
             "id": "fs",
-            "dir": "projects_replica"
+            "dir": "projects_replica",
+            // "keep_mime_types": "True"
           }
         }
       }

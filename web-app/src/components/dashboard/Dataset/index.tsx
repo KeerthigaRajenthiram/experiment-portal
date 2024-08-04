@@ -41,7 +41,10 @@ const Organization = () => {
   const [pathFields, setPathFields] = useState([{ value: '' }]);
   const [showMetadataEditPopover, setShowMetadataEditPopover] = useState<boolean>(false);
   const [editingMetadata, setEditingMetadata] = useState([defaultMetadataItem]);
-  const [metadataDatasetID, setMetadataDatasetID] = useState<string | null>(null); // To keep track of which dataset is being edited
+  const [metadataDatasetID, setMetadataDatasetID] = useState<string | null>(null); 
+  const [showDownloadPopover, setShowDownloadPopover] = useState<boolean>(false);
+  const [selectedSource, setSelectedSource] = useState<'zenoh1' | 'zenoh2' | 'server'>('zenoh1');
+  const [currentDatasetIndex, setCurrentDatasetIndex] = useState<number | null>(null);
 
   const isDatasetEmpty = datasets.length === 0;
   const projID = useLocation().pathname.split('/')[3];
@@ -227,39 +230,6 @@ const Organization = () => {
       });
   };
 
-  const handleDownloadDataset = useCallback(
-    async (index: number) => {
-      const datasetId = datasets[index].id_dataset;
-      try {
-        const response = await getDatasetRequest({
-          url: `/exp/projects/${projID}/datasets/${datasetId}/download`,
-          method: 'GET',
-          responseType: 'blob', 
-        });
-        console.log('Response:', response);
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        let filename = datasetId; 
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        console.log({ type: 'success', message: 'File downloaded successfully.' });
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error('General error:', error.message);
-          message(`Error: ${error.message}`);
-        } else {
-          console.error('Unexpected error:', error);
-          message('An unexpected error occurred');
-        }
-      }
-    },
-    [datasets, projID, getDatasetRequest]
-  );
-  
   const handleOpenPopover = (index: number) => {
     setDeleteIndex(index);
     setShowPopover(true);
@@ -496,6 +466,89 @@ const Organization = () => {
     }
   };
 
+  const handleOpenDownloadPopover = (index: number) => {
+    setCurrentDatasetIndex(index);
+    setShowDownloadPopover(true);
+  };
+  
+  const handleCloseDownloadPopover = () => {
+    setShowDownloadPopover(false);
+  };
+  
+  const handleDownloadOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedSource(event.target.value as 'zenoh1' | 'zenoh2' | 'server');
+  };
+
+ 
+  
+  const handleConfirmDownload = async () => {
+    if (currentDatasetIndex !== null) {
+      const dataset = datasets[currentDatasetIndex];
+      const datasetId = dataset.id_dataset;
+      const downloadUrl = `/exp/projects/${projID}/datasets/${datasetId}`;
+  
+      try {
+        let response;
+        let filename = datasetId; // Default filename
+  
+        switch (selectedSource) {
+          case 'zenoh1':
+            response = await getDatasetRequest({
+              url: `http://127.0.0.1:18000${downloadUrl}`,
+              method: 'GET',
+              responseType: 'blob',
+            });
+            break;
+          case 'zenoh2':
+            response = await getDatasetRequest({
+              url: `http://127.0.0.1:28000${downloadUrl}`,
+              method: 'GET',
+              responseType: 'blob',
+            });
+            break;
+          case 'server':
+          default:
+            response = await getDatasetRequest({
+              url: `http://127.0.0.1:5050${downloadUrl}/download`,
+              method: 'GET',
+              responseType: 'blob',
+            });
+        }
+        // Extract the file extension from the datasetId
+        const match = datasetId.match(/\.([a-zA-Z0-9]+)$/);
+        const fileExtension = match ? match[1] : 'bin'; // Default to 'bin' if no match is found
+        console.log(fileExtension); // Should print the file extension, or 'bin' if not found
+
+        // const contentType = extensionsToMimeTypes[fileExtension] || 'application/octet-stream'; // Default to binary stream if MIME type not found
+ 
+        // Handle file download
+        const blob = new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename); // Use filename with extension
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        console.log('File downloaded successfully.');
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error('General error:', error.message);
+          message(`Error: ${error.message}`);
+        } else {
+          console.error('Unexpected error:', error);
+          message('An unexpected error occurred');
+        }
+      }
+  
+      handleCloseDownloadPopover();
+    }
+  };
+  
+
+    
+
   return (
     <div className="specification">
       <div className="specification__functions" style={{ margin: 10 }}>
@@ -592,7 +645,7 @@ const Organization = () => {
                   <span
                     title="download dataset"
                     className="iconfont editable"
-                    onClick={() => handleDownloadDataset(index)}
+                    onClick={() => handleOpenDownloadPopover(index)}
                   >
                     &#xe627;
                   </span>
@@ -855,7 +908,50 @@ const Organization = () => {
           </div>
         </div>
       </Popover>
-
+      <Popover show={showDownloadPopover} blankClickCallback={handleCloseDownloadPopover}>
+        <div className="popover__download">
+          <div className="popover__download__text">
+            Do you want to download from:
+          </div>
+          <div className="popover__download__options">
+            <label>
+              <input
+                type="radio"
+                value="zenoh1"
+                checked={selectedSource === 'zenoh1'}
+                onChange={handleDownloadOptionChange}
+              />
+              Zenoh1
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="zenoh2"
+                checked={selectedSource === 'zenoh2'}
+                onChange={handleDownloadOptionChange}
+              />
+              Zenoh2
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="server"
+                checked={selectedSource === 'server'}
+                onChange={handleDownloadOptionChange}
+              />
+              Server (will look for the closest Zenoh node)
+            </label>
+          </div>
+          <div className="popover__download__buttons">
+            <button className="popover__download__buttons__cancel" onClick={handleCloseDownloadPopover}>
+              Cancel
+            </button>
+            <button className="popover__download__buttons__confirm" onClick={handleConfirmDownload}>
+              Confirm
+            </button>
+          </div>
+        </div>
+      </Popover>
     </div>
   );
 };
