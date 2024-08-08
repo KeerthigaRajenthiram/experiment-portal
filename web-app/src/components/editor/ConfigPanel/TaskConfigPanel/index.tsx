@@ -47,13 +47,20 @@ const TaskConfigPanel: React.FC<TaskConfigPanelProps> = ({ updateSideBar }) => {
   // TODO: fetch task implementation references from the server
   const taskImpReferences: string[] = [
     'NoReference',
-    'ReadData',
-    'AddPadding',
-    'SplitData',
-    'TrainModel',
-    'TrainModelNN',
-    'TrainModelRNN',
-    'EvaluateModel',
+    'ReadData_M',
+    'AddPadding_M',
+    'SplitData_M',
+    'TrainModel_M',
+    'TrainModelNN_M',
+    'TrainModelRNN_M',
+    'EvaluateModel_M',
+    'ReadData_B',
+    'AddPadding_B',
+    'SplitData_B',
+    'TrainModel_B',
+    'TrainModelNN_B',
+    'TrainModelRNN_B',
+    'EvaluateModel_B',
   ];
 
   const { updateNodeData, selectedNode } = useReactFlowInstanceStore(
