@@ -133,7 +133,7 @@ export type CreateDatasetResponseType = {
   };
 };
 
-export type CreateFolderResponseType = {
+export type CreateManyDatasetsResponseType = {
   message: string;
   data: {
     dataset_ids: Array<string>;

@@ -9,7 +9,7 @@ import { defaultDataset, defaultMetadataItem } from '../../../types/dataset';
 import {
   DatasetsResponseType,
   CreateDatasetResponseType,
-  CreateFolderResponseType,
+  CreateManyDatasetsResponseType,
   UpdateDatasetNameResponseType,
   UpdateDatasetDescriptionResponseType, 
   DeleteExperimentResponseType,
@@ -51,7 +51,7 @@ const Organization = () => {
 
   const { request: datasetsRequest } = useRequest<DatasetsResponseType>();
   const { request: createDatasetRequest } = useRequest<CreateDatasetResponseType>();
-  const { request: createFolderRequest } = useRequest<CreateFolderResponseType>();
+  const { request: createManyDatasetsRequest } = useRequest<CreateManyDatasetsResponseType>();
   const { request: getDatasetRequest } = useRequest<DownloadResponseType>();
   const { request: updateDatasetNameRequest } = useRequest<UpdateDatasetNameResponseType>();
   const { request: UpdateDatasetMetadataRequest } = useRequest<UpdateDatasetMetadataResponseType>();
@@ -362,8 +362,8 @@ const Organization = () => {
     });
   
     try {
-      const response = await createFolderRequest({
-        url: `/exp/projects/${projID}/folder/create`,
+      const response = await createManyDatasetsRequest({
+        url: `/exp/projects/${projID}/datasets/create_many`,
         method: 'POST',
         data: formData,
       });
@@ -562,7 +562,7 @@ const Organization = () => {
             setShowFolderPopover(true);
             }}
         >
-          Add Folder
+          Add Datasets 
         </button>
       </div>
       <div className="specification__contents">
@@ -746,14 +746,14 @@ const Organization = () => {
       </Popover>
       <Popover show={showFolderPopover} blankClickCallback={() => setShowFolderPopover(false)}>
         <div className="popover__upload-folder">
-          <div className="popover__upload-folder__text">Set Folder Path</div>
+          <div className="popover__upload-folder__text">Set Path</div>
           <div className="popover__upload-folder__path-fields">
             {pathFields.map((field, index) => (
               <div key={index} className="popover__upload-folder__path-fields__item">
                 <input
                   className="popover__upload-folder__path__input"
                   type="text"
-                  placeholder={index === 0 ? 'Folder' : `Sub folder ${index}`}
+                  placeholder={index === 0 ? 'Folder name' : `Sub folder ${index} name`}
                   value={field.value}
                   onChange={(e) => handlePathFieldChange(index, e.target.value)}
                   required={index === 0} // Make the first field required

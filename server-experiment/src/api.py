@@ -350,8 +350,9 @@ def create_dataset(proj_id):
     else:
         return jsonify({"error": "Failed to create dataset"}), 500
 
-@app.route("/exp/projects/<proj_id>/folder/create", methods=["OPTIONS", "POST"])
-def create_folder(proj_id):
+@app.route("/exp/projects/<proj_id>/datasets/create_many", methods=["OPTIONS", "POST"])
+@cross_origin()
+def create_datasets_under_path(proj_id):
     path = request.form.get('path')
     if not path:
         return jsonify({"error": "Missing path parameter"}), 400
