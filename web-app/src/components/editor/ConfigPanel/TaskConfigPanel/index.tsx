@@ -60,7 +60,7 @@ const TaskConfigPanel: React.FC<TaskConfigPanelProps> = ({ updateSideBar }) => {
     'TrainModel_B',
     'TrainModelNN_B',
     'TrainModelRNN_B',
-    'EvaluateModel_B',
+    'EvaluateModel_B', 
   ];
 
   const { updateNodeData, selectedNode } = useReactFlowInstanceStore(
